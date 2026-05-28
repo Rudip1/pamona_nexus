@@ -7,6 +7,10 @@ picking (strawberry / grapevine / apple / mushroom).
 Targets **Ubuntu 22.04 + ROS 2 Humble + Gazebo Classic 11**. The same workspace
 runs on the dev machine (simulation) and on the real robot (hardware drivers).
 
+**Author** Pravin Oli &nbsp;·&nbsp; `pravin.oli.08@gmail.com` &nbsp;·&nbsp; `olipravin18@gmail.com`
+**License** Apache-2.0 — see [`LICENSE`](LICENSE)
+**Attribution** — see [`NOTICE.md`](NOTICE.md) for credits to AgileX, UFactory, DH Robotics, Intel RealSense, RoboSense, Xsens, and the ROS 2 / Gazebo / MoveIt / Nav2 communities.
+
 ## Layout
 
 ```
