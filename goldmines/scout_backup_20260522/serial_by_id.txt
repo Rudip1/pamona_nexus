@@ -1,0 +1,5 @@
+total 0
+drwxr-xr-x 2 root root 80 May 22 09:13 .
+drwxr-xr-x 4 root root 80 May 22 09:13 ..
+lrwxrwxrwx 1 root root 13 May 22 09:13 usb-FTDI_FT232R_USB_UART_A9L3YCC7-if00-port0 -> ../../ttyUSB1
+lrwxrwxrwx 1 root root 13 May 22 09:13 usb-Xsens_Motion_Tracker_Dev._Board_DB4698SY-if00-port0 -> ../../ttyUSB0

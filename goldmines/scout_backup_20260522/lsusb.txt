@@ -1,0 +1,13 @@
+Bus 002 Device 003: ID 8086:0b07 Intel Corp. 
+Bus 002 Device 004: ID 2109:0813 VIA Labs, Inc. 
+Bus 002 Device 002: ID 2109:0813 VIA Labs, Inc. 
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 008: ID 1a40:0101 Terminus Technology Inc. Hub
+Bus 001 Device 009: ID 046d:c52b Logitech, Inc. Unifying Receiver
+Bus 001 Device 005: ID 1a40:0101 Terminus Technology Inc. Hub
+Bus 001 Device 003: ID 2639:0300 Xsens 
+Bus 001 Device 013: ID 0403:6001 Future Technology Devices International, Ltd FT232 USB-Serial (UART) IC
+Bus 001 Device 012: ID 1d50:606f OpenMoko, Inc. 
+Bus 001 Device 004: ID 2109:2813 VIA Labs, Inc. 
+Bus 001 Device 002: ID 2109:2813 VIA Labs, Inc. 
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub

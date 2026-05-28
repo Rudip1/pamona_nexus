@@ -1,0 +1,32 @@
+# ── colcon build outputs ──────────────────────────────────────────────────────
+build/
+install/
+log/
+
+# ── python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# ── editor ────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*~
+
+# ── ROS / Gazebo runtime artifacts ────────────────────────────────────────────
+*.bag
+*.db3
+*.mcap
+
+# ── goldmines: keep folder, ignore the huge tarball ──────────────────────────
+# The 2.4 GB tar of the original ROS1 workspace is too big for git.
+# Extract it locally when you need to reference it; do not commit.
+goldmines/scout_workspaces_20260522.tar.gz
+goldmines/.extracted/
+
+# ── OS junk ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
