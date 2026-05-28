@@ -1,0 +1,19 @@
+# Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+# Licensed under the Apache License, Version 2.0.
+#
+# Placeholder ros2_control configuration for xArm6 + AG95 in simulation.
+# Wire in once gazebo_ros2_control plugin is added to gazebo_plugins.xacro
+# and the arm gets a JointTrajectoryController.
+
+controller_manager:
+  ros__parameters:
+    update_rate: 100   # Hz
+
+    # joint_state_broadcaster:
+    #   type: joint_state_broadcaster/JointStateBroadcaster
+
+    # xarm6_traj_controller:
+    #   type: joint_trajectory_controller/JointTrajectoryController
+
+    # ag95_gripper_controller:
+    #   type: position_controllers/GripperActionController

@@ -1,0 +1,20 @@
+# Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+# Licensed under the Apache License, Version 2.0.
+#
+# Placeholder for real-robot ros2_control configuration (xArm6 + AG95).
+# Wire in once xarm_ros2 controller is integrated.
+
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+    # joint_state_broadcaster:
+    #   type: joint_state_broadcaster/JointStateBroadcaster
+    #
+    # xarm6_traj_controller:
+    #   type: joint_trajectory_controller/JointTrajectoryController
+    #   joints: [joint1, joint2, joint3, joint4, joint5, joint6]
+    #
+    # ag95_gripper_controller:
+    #   type: position_controllers/GripperActionController
+    #   joint: finger_joint

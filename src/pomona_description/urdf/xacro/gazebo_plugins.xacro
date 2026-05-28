@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Licensed under the Apache License, Version 2.0.
+
+  Gazebo Classic 11 plugins for Pomona.
+  Only included when xacro is processed with `use_sim:=true`.
+
+  Plugins:
+    - libgazebo_ros_diff_drive.so       — Scout V2 skid-steer (4 wheels)
+    - libgazebo_ros_joint_state_publisher.so — joint_states for arm + gripper
+    - libgazebo_ros_ray_sensor.so       — rslidar /scan + /points
+    - libgazebo_ros_camera.so           — D435 RGB + depth
+    - libgazebo_ros_imu_sensor.so       — Xsens IMU /imu/data
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Scout V2 skid-steer differential drive
+       ════════════════════════════════════════════════════════════════════ -->
+  <gazebo>
+    <plugin name="scout_diff_drive" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <namespace>/</namespace>
+      </ros>
+      <!-- Left side wheels (front_left + rear_left) -->
+      <left_joint>front_left_wheel</left_joint>
+      <left_joint>rear_left_wheel</left_joint>
+      <!-- Right side wheels (front_right + rear_right) -->
+      <right_joint>front_right_wheel</right_joint>
+      <right_joint>rear_right_wheel</right_joint>
+
+      <wheel_separation>0.58306</wheel_separation>
+      <wheel_diameter>0.32918</wheel_diameter>
+
+      <max_wheel_torque>50.0</max_wheel_torque>
+      <max_wheel_acceleration>2.0</max_wheel_acceleration>
+
+      <command_topic>cmd_vel</command_topic>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+
+      <update_rate>50.0</update_rate>
+    </plugin>
+
+    <!-- Joint state publisher for arm + gripper visualisation -->
+    <plugin name="pomona_joint_states" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>50</update_rate>
+      <joint_name>joint1</joint_name>
+      <joint_name>joint2</joint_name>
+      <joint_name>joint3</joint_name>
+      <joint_name>joint4</joint_name>
+      <joint_name>joint5</joint_name>
+      <joint_name>joint6</joint_name>
+      <joint_name>finger_joint</joint_name>
+    </plugin>
+  </gazebo>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Robosense LiDAR (publishes /scan via ray_sensor)
+       ════════════════════════════════════════════════════════════════════ -->
+  <gazebo reference="rslidar">
+    <sensor name="rslidar" type="ray">
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.2</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin name="rslidar_controller" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>rslidar</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Xsens MTi IMU
+       ════════════════════════════════════════════════════════════════════ -->
+  <gazebo reference="imu_link">
+    <sensor name="imu" type="imu">
+      <always_on>true</always_on>
+      <update_rate>200</update_rate>
+      <plugin name="imu_controller" filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <remapping>~/out:=imu/data</remapping>
+        </ros>
+        <frame_name>imu_link</frame_name>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       Intel RealSense D435 — RGB camera
+       ════════════════════════════════════════════════════════════════════ -->
+  <gazebo reference="camera_link">
+    <sensor name="d435_rgb" type="camera">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>30</update_rate>
+      <camera>
+        <horizontal_fov>1.211</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip><near>0.1</near><far>10.0</far></clip>
+      </camera>
+      <plugin name="d435_rgb_controller" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>/camera</namespace>
+          <remapping>image_raw:=color/image_raw</remapping>
+          <remapping>camera_info:=color/camera_info</remapping>
+        </ros>
+        <frame_name>camera_color_optical_frame</frame_name>
+      </plugin>
+    </sensor>
+
+    <!-- D435 depth camera (low-res for sim performance) -->
+    <sensor name="d435_depth" type="depth">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>15</update_rate>
+      <camera>
+        <horizontal_fov>1.487</horizontal_fov>
+        <image>
+          <width>424</width>
+          <height>240</height>
+        </image>
+        <clip><near>0.3</near><far>5.0</far></clip>
+      </camera>
+      <plugin name="d435_depth_controller" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>/camera</namespace>
+          <remapping>image_raw:=depth/image_rect_raw</remapping>
+          <remapping>camera_info:=depth/camera_info</remapping>
+          <remapping>points:=depth/points</remapping>
+        </ros>
+        <frame_name>camera_depth_optical_frame</frame_name>
+        <point_cloud_cutoff>0.3</point_cloud_cutoff>
+        <point_cloud_cutoff_max>5.0</point_cloud_cutoff_max>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

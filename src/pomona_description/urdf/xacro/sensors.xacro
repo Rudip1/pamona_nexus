@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Licensed under the Apache License, Version 2.0.
+
+  Pomona on-board sensors.
+
+  Hardware:
+    - Robosense LiDAR (rslidar) on top of Scout base
+    - Intel RealSense D435 mounted on xArm6 end-effector
+    - Xsens MTi IMU on Scout base
+
+  Offsets come from the original real-robot bringup (goldmines/.../bringup_minimal.launch).
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       1. Robosense LiDAR (mounted on base_link, frame = rslidar)
+       Origin: 0 0 0.138 from base_link  (from bringup_minimal.launch)
+       ════════════════════════════════════════════════════════════════════ -->
+  <link name="rslidar">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder length="0.07" radius="0.05"/></geometry>
+      <material name="dark"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder length="0.07" radius="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.83"/>
+      <origin xyz="0 0 0"/>
+      <xacro:cylinder_inertia m="0.83" r="0.05" h="0.07"/>
+    </inertial>
+  </link>
+  <joint name="rslidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="rslidar"/>
+    <origin xyz="0 0 0.138" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       2. Xsens MTi IMU (mounted on base_link)
+       Approximate placement; refine when validating against bag data.
+       ════════════════════════════════════════════════════════════════════ -->
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.035 0.057 0.022"/></geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.035 0.057 0.022"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.05"/>
+      <origin xyz="0 0 0"/>
+      <xacro:box_inertia m="0.05" x="0.035" y="0.057" z="0.022"/>
+    </inertial>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="imu_link"/>
+    <origin xyz="0.32 0 0.18" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       3. Intel RealSense D435 on xArm6 EE
+       Static offset from link_eef per real robot calibration:
+       xyz = 0 0 0.06   rpy = 0 -1.57 3.14  (from bringup_minimal.launch)
+       ════════════════════════════════════════════════════════════════════ -->
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.025 0.09 0.025"/></geometry>
+      <material name="dark"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><box size="0.025 0.09 0.025"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.072"/>
+      <origin xyz="0 0 0"/>
+      <xacro:box_inertia m="0.072" x="0.025" y="0.09" z="0.025"/>
+    </inertial>
+  </link>
+  <joint name="camera_mount_joint" type="fixed">
+    <parent link="link_eef"/>
+    <child  link="camera_link"/>
+    <origin xyz="0 0 0.06" rpy="0 -1.57 3.14"/>
+  </joint>
+
+  <!-- Optical frames following REP-103 (Z forward, X right, Y down) -->
+  <link name="camera_color_optical_frame"/>
+  <joint name="camera_color_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child  link="camera_color_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+  </joint>
+
+  <link name="camera_depth_optical_frame"/>
+  <joint name="camera_depth_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child  link="camera_depth_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+  </joint>
+
+</robot>

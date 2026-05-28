@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Licensed under the Apache License, Version 2.0.
+
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║                     POMONA — Root URDF                              ║
+  ║                                                                      ║
+  ║  AgileX Scout V2 + UFactory xArm6 + DH Robotics AG95 + sensors      ║
+  ║                                                                      ║
+  ║  Pass use_sim:=true at xacro-time to include Gazebo plugins         ║
+  ║  (diff_drive, camera, lidar, imu). Real robot launches use the      ║
+  ║  default (use_sim:=false) and the description carries no plugins.   ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<robot name="pomona" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ── arg: include Gazebo plugins or not ───────────────────────────── -->
+  <xacro:arg name="use_sim" default="false"/>
+  <xacro:property name="use_sim" value="$(arg use_sim)"/>
+
+  <!-- ── shared utilities ─────────────────────────────────────────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/xacro/common_properties.xacro"/>
+
+  <!-- ── mobile base ──────────────────────────────────────────────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/xacro/scout_v2.xacro"/>
+
+  <!-- ── manipulator ──────────────────────────────────────────────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/xacro/xarm6.xacro"/>
+  <xacro:xarm6 prefix=""/>
+
+  <!-- Mount xArm6 on Scout base: 0.212 forward of base centre, 0.26 up
+       (from goldmines/.../scout_xarm_gripper.xacro) -->
+  <joint name="arm_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="link_base"/>
+    <origin xyz="0.212 0 0.26" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ── gripper ──────────────────────────────────────────────────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/xacro/ag95_gripper.xacro"/>
+  <xacro:ag95_gripper prefix=""/>
+
+  <!-- Attach AG95 base to xArm6 end-effector -->
+  <joint name="gripper_mount_joint" type="fixed">
+    <parent link="link_eef"/>
+    <child  link="dh_robotics_ag95_base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ── sensors (LiDAR, IMU, camera links) ───────────────────────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/xacro/sensors.xacro"/>
+
+  <!-- ── Gazebo plugins (conditional) ─────────────────────────────────── -->
+  <xacro:if value="${use_sim}">
+    <xacro:include filename="$(find pomona_description)/urdf/xacro/gazebo_plugins.xacro"/>
+  </xacro:if>
+
+</robot>

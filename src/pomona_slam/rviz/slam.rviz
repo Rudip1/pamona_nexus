@@ -1,0 +1,45 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Enabled: true
+      Name: Grid
+      Plane Cell Count: 20
+    - Class: rviz_default_plugins/RobotModel
+      Description Source: Topic
+      Description Topic: { Value: /robot_description }
+      Enabled: true
+      Name: RobotModel
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Marker Scale: 0.3
+      Name: TF
+      Show Names: false
+    - Class: rviz_default_plugins/Map
+      Enabled: true
+      Name: Map
+      Topic: { Value: /map }
+    - Class: rviz_default_plugins/LaserScan
+      Enabled: true
+      Name: LiDAR
+      Topic: { Value: /scan }
+      Size (Pixels): 3
+      Style: Points
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: map
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 15
+      Focal Point: { X: 0, Y: 0, Z: 0 }
+      Name: Current View
+      Yaw: 0.8
+      Pitch: 0.8

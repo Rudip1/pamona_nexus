@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
+            schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>pomona_bringup</name>
+  <version>0.1.0</version>
+  <description>
+    Real-robot hardware bringup for Pomona. Launch files + configs for the
+    AgileX Scout V2 CAN driver, UFactory xArm6 ethernet driver, DH Robotics
+    AG95 gripper, Robosense LiDAR, Intel RealSense D435, and Xsens MTi IMU.
+    No simulation here — sim lives in pomona_gazebo.
+  </description>
+
+  <maintainer email="pravin.oli.08@gmail.com">Pravin Oli</maintainer>
+  <maintainer email="olipravin18@gmail.com">Pravin Oli</maintainer>
+  <author email="pravin.oli.08@gmail.com">Pravin Oli</author>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>pomona_description</depend>
+
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <!-- Hardware driver dependencies (install via apt / vcs when available):
+       - scout_ros2          (AgileX Scout V2 CAN driver)
+       - xarm_ros2           (UFactory xArm6 driver)
+       - dh_gripper_driver   (DH Robotics AG95 driver — port from ROS1)
+       - rslidar_sdk         (Robosense LiDAR)
+       - realsense2_camera   (Intel RealSense)
+       - xsens_mti_driver    (Xsens MTi IMU)
+       - pointcloud_to_laserscan
+  -->
+  <exec_depend>pointcloud_to_laserscan</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,26 @@
+# Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+# Licensed under the Apache License, Version 2.0.
+#
+# SLAM Toolbox — pure localization (no map update).
+
+slam_toolbox:
+  ros__parameters:
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+
+    odom_frame: odom
+    map_frame:  map
+    base_frame: base_footprint
+    scan_topic: /scan
+    mode: localization
+
+    resolution: 0.05
+    max_laser_range: 25.0
+    minimum_time_interval: 0.5
+
+    # Localization specifics
+    do_loop_closing: true
+    loop_search_maximum_distance: 3.0
+    map_file_name: ""        # set via launch arg / overlay
+    map_start_at_dock: true

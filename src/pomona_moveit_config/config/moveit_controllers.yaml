@@ -1,0 +1,31 @@
+# Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+# Licensed under the Apache License, Version 2.0.
+#
+# MoveIt → ros2_control controller bindings.
+# Bridges plan_request → JointTrajectoryController on the real / sim arm.
+
+moveit_simple_controller_manager:
+  controller_names:
+    - xarm6_traj_controller
+    - ag95_gripper_controller
+
+  xarm6_traj_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+
+  ag95_gripper_controller:
+    type: GripperCommand
+    action_ns: gripper_cmd
+    default: true
+    joints:
+      - finger_joint
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager

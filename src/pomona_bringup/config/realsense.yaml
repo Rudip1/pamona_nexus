@@ -1,0 +1,24 @@
+# Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+# Licensed under the Apache License, Version 2.0.
+#
+# Intel RealSense D435 parameters.
+# Matches the real-robot bringup_minimal.launch config:
+#   - color stream enabled
+#   - depth stream enabled with align_depth
+#   - infra streams disabled (perf)
+
+camera:
+  ros__parameters:
+    align_depth.enable: true
+    enable_color: true
+    enable_depth: true
+    enable_infra1: false
+    enable_infra2: false
+    color_width: 1280
+    color_height: 720
+    color_fps: 30.0
+    depth_width: 848
+    depth_height: 480
+    depth_fps: 30.0
+    publish_tf: false      # robot_state_publisher already handles ee→camera TF
+    tf_prefix: camera

@@ -1,0 +1,22 @@
+Mesh source attribution
+========================
+
+base/base_link.dae, base/base_link_full.dae, wheels/wheel_type1.dae, wheels/wheel_type2.dae
+  Source: AgileX Robotics scout_ros (scout_description)
+          https://github.com/agilexrobotics/scout_ros
+  License: BSD-3-Clause (see upstream)
+  Lifted unmodified — package:// reference rewritten to pomona_description.
+
+sensors/hokuyo.dae
+  Source: AgileX Robotics scout_description (sample)
+  License: BSD-3-Clause (see upstream)
+
+arm/base.stl, arm/link1..6.stl, arm/end_tool.STL
+  Source: UFactory xArm-Developer/xarm_ros (xarm_description/meshes/xarm6/visual)
+          https://github.com/xArm-Developer/xarm_ros
+  License: BSD-3-Clause (see upstream)
+
+gripper/base_link.STL, gripper/link_crank.STL, gripper/link_rod.STL,
+gripper/link_proximal_phalanx.STL, gripper/link_distal_phalanx.STL
+  Source: DH Robotics dh_robotics_ag95_model
+  License: see upstream package

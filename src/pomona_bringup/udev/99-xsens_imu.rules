@@ -1,0 +1,4 @@
+# Xsens MTi development board → /dev/xsens_imu
+# Real robot serial (from goldmines/scout_backup_20260522/serial_by_id.txt):
+#   usb-Xsens_Motion_Tracker_Dev._Board_DB4698SY-if00-port0
+KERNEL=="ttyUSB*", ATTRS{product}=="Xsens Motion Tracker Dev. Board", MODE:="0666", SYMLINK+="xsens_imu"
