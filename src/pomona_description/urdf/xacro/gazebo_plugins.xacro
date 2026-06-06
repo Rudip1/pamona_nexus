@@ -23,6 +23,9 @@
       <ros>
         <namespace>/</namespace>
       </ros>
+      <!-- Two wheels per side → must declare 2 pairs, else the plugin
+           aborts with "Inconsistent number of joints specified". -->
+      <num_wheel_pairs>2</num_wheel_pairs>
       <!-- Left side wheels (front_left + rear_left) -->
       <left_joint>front_left_wheel</left_joint>
       <left_joint>rear_left_wheel</left_joint>
@@ -47,20 +50,9 @@
       <update_rate>50.0</update_rate>
     </plugin>
 
-    <!-- Joint state publisher for arm + gripper visualisation -->
-    <plugin name="pomona_joint_states" filename="libgazebo_ros_joint_state_publisher.so">
-      <ros>
-        <remapping>~/out:=joint_states</remapping>
-      </ros>
-      <update_rate>50</update_rate>
-      <joint_name>joint1</joint_name>
-      <joint_name>joint2</joint_name>
-      <joint_name>joint3</joint_name>
-      <joint_name>joint4</joint_name>
-      <joint_name>joint5</joint_name>
-      <joint_name>joint6</joint_name>
-      <joint_name>finger_joint</joint_name>
-    </plugin>
+    <!-- NOTE: arm/gripper joint_states are published by joint_state_broadcaster
+         (ros2_control.xacro), not by libgazebo_ros_joint_state_publisher, to
+         avoid two publishers racing on /joint_states. -->
   </gazebo>
 
   <!-- ════════════════════════════════════════════════════════════════════

@@ -60,5 +60,26 @@ ros2 launch pomona_gazebo empty_world_xacro.launch.py
 | `/camera/color/image_raw` | `sensor_msgs/Image` | D435 RGB camera plugin |
 | `/camera/depth/image_rect_raw` | `sensor_msgs/Image` | D435 depth camera plugin |
 | `/camera/depth/points` | `sensor_msgs/PointCloud2` | D435 depth camera plugin |
-| `/joint_states` | `sensor_msgs/JointState` | gazebo_ros_joint_state_publisher plugin |
+| `/joint_states` | `sensor_msgs/JointState` | `joint_state_broadcaster` (ros2_control) |
 | `/tf`, `/tf_static` | TF | robot_state_publisher + diff_drive plugin |
+
+## Arm + gripper control (gazebo_ros2_control)
+
+The xacro pipeline includes `ros2_control.xacro` (sim only) and the
+`libgazebo_ros2_control.so` plugin, which runs a `controller_manager` inside
+Gazebo. `empty_world_xacro.launch.py` spawns three controllers and then sends a
+one-shot trajectory to raise the arm to its home fold.
+
+| Controller | Type | Interface |
+|---|---|---|
+| `joint_state_broadcaster` | `joint_state_broadcaster/JointStateBroadcaster` | publishes `/joint_states` |
+| `xarm6_traj_controller` | `joint_trajectory_controller/JointTrajectoryController` | `/xarm6_traj_controller/follow_joint_trajectory` (action) |
+| `ag95_gripper_controller` | `position_controllers/GripperActionController` | `/ag95_gripper_controller/gripper_cmd` (action); AG95 fingers follow `finger_joint` via URDF `<mimic>` |
+
+Controller params: `config/gazebo_ros2_control_sim.yaml`. Quick checks and the
+full failure catalogue (diff-drive `num_wheel_pairs`, the rcl comment-parse
+issue, arm droop) are in **`docs/sim_runbook.md`**.
+
+> Note: `pomona_state_publisher.launch.py` strips XML comments from the URDF
+> before publishing — required so `gazebo_ros2_control` can parse it. Do not
+> revert that to a plain `Command([xacro …])` value.

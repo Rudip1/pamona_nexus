@@ -30,3 +30,10 @@ goldmines/.extracted/
 # ── OS junk ───────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+
+# ── AI assistant / local tooling (keep out of the repo) ──────────────────────
+.claude/
+plans/
+*.plan.md
+AGENTS.md
+CLAUDE.md

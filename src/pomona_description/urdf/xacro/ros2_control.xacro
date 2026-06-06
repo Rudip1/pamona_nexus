@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Licensed under the Apache License, Version 2.0.
+
+  ros2_control hardware + gazebo_ros2_control plugin for SIMULATION ONLY.
+  Included from pomona.xacro inside the `use_sim` guard, so the real-robot
+  description (use_sim:=false) stays free of this block — the physical arm
+  is driven by the vendor xarm_ros2 ros2_control stack instead.
+
+  Provides:
+    - GazeboSystem hardware for joint1..joint6 (position command)
+    - finger_joint (gripper driver, position command)
+    - AG95 mimic joints (state only; positions follow finger_joint via the
+      <mimic> tags in ag95_gripper.xacro, applied by gazebo_ros2_control)
+
+  Controllers (types + params) live in the YAML referenced below; they are
+  activated by the spawners in empty_world_xacro.launch.py.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Path to the controller_manager YAML; overridable at xacro time. -->
+  <xacro:arg name="ros2_controllers_file"
+             default="$(find pomona_gazebo)/config/gazebo_ros2_control_sim.yaml"/>
+
+  <ros2_control name="PomonaGazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <!-- ── xArm6 arm joints (commandable) ──────────────────────────────── -->
+    <!-- initial_value seeds both the joint's spawn pose AND the command
+         buffer, so gazebo_ros2_control holds this configuration from t=0 —
+         the arm never droops in the gap before the controller activates.
+         Home = a compact "ready" fold, all within the joint limits. -->
+    <xacro:macro name="arm_joint" params="name initial:=0.0">
+      <joint name="${name}">
+        <command_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">${initial}</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    </xacro:macro>
+    <xacro:arm_joint name="joint1" initial="0.0"/>
+    <xacro:arm_joint name="joint2" initial="-0.5"/>
+    <xacro:arm_joint name="joint3" initial="-0.6"/>
+    <xacro:arm_joint name="joint4" initial="0.0"/>
+    <xacro:arm_joint name="joint5" initial="1.1"/>
+    <xacro:arm_joint name="joint6" initial="0.0"/>
+
+    <!-- ── AG95 gripper driver (commandable) ───────────────────────────── -->
+    <joint name="finger_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <!-- ── AG95 mimic joints (state only; follow finger_joint) ──────────── -->
+    <xacro:macro name="mimic_joint" params="name">
+      <joint name="${name}">
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </xacro:macro>
+    <xacro:mimic_joint name="left_proximal_phalanx_joint"/>
+    <xacro:mimic_joint name="left_rod_joint"/>
+    <xacro:mimic_joint name="left_distal_phalanx_joint"/>
+    <xacro:mimic_joint name="right_crank_joint"/>
+    <xacro:mimic_joint name="right_proximal_phalanx_joint"/>
+    <xacro:mimic_joint name="right_rod_joint"/>
+    <xacro:mimic_joint name="right_distal_phalanx_joint"/>
+  </ros2_control>
+
+  <!-- ── gazebo_ros2_control plugin: starts controller_manager in Gazebo ── -->
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(arg ros2_controllers_file)</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+    </plugin>
+  </gazebo>
+
+</robot>

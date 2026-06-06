@@ -43,9 +43,12 @@ source install/setup.bash
 Simulation:
 ```bash
 ros2 launch pomona_gazebo empty_world_xacro.launch.py
-# in another terminal, drive it:
-ros2 run rqt_robot_steering rqt_robot_steering
+# Scout + mounting box + xArm6 + AG95 spawn; the base drives from the
+# rqt_robot_steering slider, and the arm/gripper are controlled via
+# gazebo_ros2_control (arm rises to a home fold and holds).
 ```
+See [`docs/sim_runbook.md`](docs/sim_runbook.md) for the launch timeline,
+per-subsystem verification, and fixes for known failures.
 
 Real robot:
 ```bash

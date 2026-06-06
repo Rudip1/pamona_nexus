@@ -25,12 +25,16 @@
   <!-- ── mobile base ──────────────────────────────────────────────────── -->
   <xacro:include filename="$(find pomona_description)/urdf/xacro/scout_v2.xacro"/>
 
+  <!-- ── mounting box (white cuboid carrying arm + display) ───────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/xacro/mount.xacro"/>
+
   <!-- ── manipulator ──────────────────────────────────────────────────── -->
   <xacro:include filename="$(find pomona_description)/urdf/xacro/xarm6.xacro"/>
   <xacro:xarm6 prefix=""/>
 
   <!-- Mount xArm6 on Scout base: 0.212 forward of base centre, 0.26 up
-       (from goldmines/.../scout_xarm_gripper.xacro) -->
+       (from goldmines/.../scout_xarm_gripper.xacro). The white mounting box
+       (box_link, see mount.xacro) physically fills the gap up to this point. -->
   <joint name="arm_mount_joint" type="fixed">
     <parent link="base_link"/>
     <child  link="link_base"/>
@@ -51,9 +55,13 @@
   <!-- ── sensors (LiDAR, IMU, camera links) ───────────────────────────── -->
   <xacro:include filename="$(find pomona_description)/urdf/xacro/sensors.xacro"/>
 
-  <!-- ── Gazebo plugins (conditional) ─────────────────────────────────── -->
+  <!-- ── UVC lamp bar (front of box, below LiDAR) ─────────────────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/xacro/uvc_lamps.xacro"/>
+
+  <!-- ── Gazebo plugins + ros2_control (conditional) ──────────────────── -->
   <xacro:if value="${use_sim}">
     <xacro:include filename="$(find pomona_description)/urdf/xacro/gazebo_plugins.xacro"/>
+    <xacro:include filename="$(find pomona_description)/urdf/xacro/ros2_control.xacro"/>
   </xacro:if>
 
 </robot>

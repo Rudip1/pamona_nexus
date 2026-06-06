@@ -22,6 +22,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
+    ExecuteProcess,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
     TimerAction,
@@ -133,6 +134,45 @@ def generate_launch_description():
         ],
     )
 
+    # ── ros2_control controller spawners ─────────────────────────────────
+    # The controller_manager runs INSIDE Gazebo (libgazebo_ros2_control.so),
+    # so it only exists after the robot spawns. The spawners wait for it via
+    # --controller-manager-timeout, hence the start delay just past spawn (5 s).
+    def _spawner(name):
+        return Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=[name, "--controller-manager", "/controller_manager",
+                       "--controller-manager-timeout", "60"],
+            output="screen",
+        )
+
+    controller_spawners = TimerAction(
+        period=8.0,
+        actions=[
+            _spawner("joint_state_broadcaster"),
+            _spawner("xarm6_traj_controller"),
+            _spawner("ag95_gripper_controller"),
+        ],
+    )
+
+    # Once the trajectory controller is active, drive the arm to the home pose.
+    # The controller otherwise just holds whatever (slightly drooped) pose it
+    # finds at activation; this actively raises it to the intended fold. Home
+    # values mirror the initial_value seeds in ros2_control.xacro.
+    home_pose = ExecuteProcess(
+        cmd=[
+            "ros2", "topic", "pub", "--once",
+            "/xarm6_traj_controller/joint_trajectory",
+            "trajectory_msgs/msg/JointTrajectory",
+            "{joint_names: [joint1, joint2, joint3, joint4, joint5, joint6], "
+            "points: [{positions: [0.0, -0.5, -0.6, 0.0, 1.1, 0.0], "
+            "time_from_start: {sec: 2}}]}",
+        ],
+        output="screen",
+    )
+    go_home = TimerAction(period=14.0, actions=[home_pose])
+
     # ── Teleop GUI ────────────────────────────────────────────────────────
     teleop = Node(
         package="rqt_robot_steering",
@@ -157,6 +197,8 @@ def generate_launch_description():
             gzclient,
             rsp,
             spawn,
+            controller_spawners,
+            go_home,
             teleop,
         ]
     )

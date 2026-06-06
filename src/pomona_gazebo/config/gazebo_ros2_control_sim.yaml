@@ -1,19 +1,59 @@
 # Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
 # Licensed under the Apache License, Version 2.0.
 #
-# Placeholder ros2_control configuration for xArm6 + AG95 in simulation.
-# Wire in once gazebo_ros2_control plugin is added to gazebo_plugins.xacro
-# and the arm gets a JointTrajectoryController.
+# ros2_control configuration for xArm6 + AG95 under gazebo_ros2_control.
+# Loaded by the libgazebo_ros2_control.so plugin (see ros2_control.xacro),
+# which starts the controller_manager inside Gazebo. Controllers are then
+# activated by the spawners in empty_world_xacro.launch.py.
 
 controller_manager:
   ros__parameters:
     update_rate: 100   # Hz
 
-    # joint_state_broadcaster:
-    #   type: joint_state_broadcaster/JointStateBroadcaster
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
 
-    # xarm6_traj_controller:
-    #   type: joint_trajectory_controller/JointTrajectoryController
+    xarm6_traj_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
 
-    # ag95_gripper_controller:
-    #   type: position_controllers/GripperActionController
+    ag95_gripper_controller:
+      type: position_controllers/GripperActionController
+
+# ── xArm6: 6-DOF arm, position-commanded trajectory controller ───────────
+xarm6_traj_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    # Loose tolerances — Gazebo tracking is not perfect.
+    constraints:
+      stopped_velocity_tolerance: 0.05
+      goal_time: 0.0
+      joint1: { trajectory: 0.2, goal: 0.1 }
+      joint2: { trajectory: 0.2, goal: 0.1 }
+      joint3: { trajectory: 0.2, goal: 0.1 }
+      joint4: { trajectory: 0.2, goal: 0.1 }
+      joint5: { trajectory: 0.2, goal: 0.1 }
+      joint6: { trajectory: 0.2, goal: 0.1 }
+
+# ── AG95: single driver joint, fingers follow via URDF <mimic> ───────────
+ag95_gripper_controller:
+  ros__parameters:
+    joint: finger_joint
+    allow_stalling: true
+    max_effort: 20.0
+    stall_velocity_threshold: 0.001
+    stall_timeout: 0.5
+    goal_tolerance: 0.01

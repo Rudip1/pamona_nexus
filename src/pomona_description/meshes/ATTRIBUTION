@@ -20,3 +20,10 @@ gripper/base_link.STL, gripper/link_crank.STL, gripper/link_rod.STL,
 gripper/link_proximal_phalanx.STL, gripper/link_distal_phalanx.STL
   Source: DH Robotics dh_robotics_ag95_model
   License: see upstream package
+
+mount/box_link.stl, mount/display_link.stl, mount/laser_link.stl
+  Source: agilex scout_xarm_base (ROS 1) — SolidWorks URDF-exporter STLs
+          archived in goldmines/scout_workspaces_20260522.tar.gz
+          (.../scout_xarm/scout_xarm_base/meshes/{base_link,display_Link,laser_Link}.STL)
+  License: see upstream package (custom AgileX/SolidWorks export)
+  Renamed: base_link.STL -> box_link.stl (avoids clash with base/base_link.dae).

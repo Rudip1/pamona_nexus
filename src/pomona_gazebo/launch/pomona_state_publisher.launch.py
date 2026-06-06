@@ -5,48 +5,61 @@
 # Robot state publisher for the Gazebo pipeline.
 # Processes pomona.xacro with use_sim:=true (Gazebo plugins included)
 # and publishes /robot_description + the TF tree under base_link.
+#
+# NOTE: XML comments are stripped from the generated URDF before it is
+# published. gazebo_ros2_control (Humble, 0.4.x) re-passes robot_description
+# to the controller_manager as a `--param` CLI override; rcl's argument
+# parser rejects the non-ASCII box-drawing characters used in our xacro
+# comment headers ("Couldn't parse parameter override rule"). Stripping
+# comments keeps the source style intact while making the runtime URDF safe.
 
+import re
+import subprocess
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import (
-    Command,
-    FindExecutable,
-    LaunchConfiguration,
-    PathJoinSubstitution,
-)
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch_ros.descriptions import ParameterValue
-from launch_ros.substitutions import FindPackageShare
+
+import os
+
+
+def _launch_setup(context, *args, **kwargs):
+    xacro_path = os.path.join(
+        get_package_share_directory("pomona_description"),
+        "urdf", "xacro", "pomona.xacro",
+    )
+    use_sim_time = LaunchConfiguration("use_sim_time").perform(context)
+
+    # Run xacro, then drop XML comments (see header note).
+    urdf = subprocess.check_output(
+        ["xacro", xacro_path, "use_sim:=true"], text=True
+    )
+    urdf = re.sub(r"<!--.*?-->", "", urdf, flags=re.DOTALL)
+
+    return [
+        Node(
+            package="robot_state_publisher",
+            executable="robot_state_publisher",
+            name="robot_state_publisher",
+            output="screen",
+            parameters=[
+                {
+                    "robot_description": urdf,
+                    "use_sim_time": use_sim_time == "true",
+                }
+            ],
+        )
+    ]
 
 
 def generate_launch_description():
-    xacro_path = PathJoinSubstitution(
-        [FindPackageShare("pomona_description"), "urdf", "xacro", "pomona.xacro"]
-    )
-
-    use_sim_time = LaunchConfiguration("use_sim_time", default="true")
-
-    robot_description = ParameterValue(
-        Command([FindExecutable(name="xacro"), " ", xacro_path, " use_sim:=true"]),
-        value_type=str,
-    )
-
     return LaunchDescription(
         [
             DeclareLaunchArgument(
                 "use_sim_time", default_value="true", description="Use Gazebo clock"
             ),
-            Node(
-                package="robot_state_publisher",
-                executable="robot_state_publisher",
-                name="robot_state_publisher",
-                output="screen",
-                parameters=[
-                    {
-                        "robot_description": robot_description,
-                        "use_sim_time": use_sim_time,
-                    }
-                ],
-            ),
+            OpaqueFunction(function=_launch_setup),
         ]
     )

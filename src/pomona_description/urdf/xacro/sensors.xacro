@@ -15,29 +15,35 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- ════════════════════════════════════════════════════════════════════
-       1. Robosense LiDAR (mounted on base_link, frame = rslidar)
-       Origin: 0 0 0.138 from base_link  (from bringup_minimal.launch)
+       1. Robosense LiDAR (frame = rslidar)
+       The real unit sits at the FRONT of the mounting box, not floating
+       above the base centre. Mounted on box_link with the original
+       laser_Link transform from scout_xarm_base (xyz 0.37655 0 0.003).
+       Visual uses the ported laser_link mesh; collision is a cheap cylinder.
        ════════════════════════════════════════════════════════════════════ -->
   <link name="rslidar">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry><cylinder length="0.07" radius="0.05"/></geometry>
-      <material name="dark"/>
+      <geometry>
+        <mesh filename="package://pomona_description/meshes/mount/laser_link.stl"/>
+      </geometry>
+      <material name="white"/>
     </visual>
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry><cylinder length="0.07" radius="0.05"/></geometry>
+      <origin xyz="0 0 0.04" rpy="0 0 0"/>
+      <geometry><cylinder length="0.09" radius="0.05"/></geometry>
     </collision>
     <inertial>
-      <mass value="0.83"/>
-      <origin xyz="0 0 0"/>
-      <xacro:cylinder_inertia m="0.83" r="0.05" h="0.07"/>
+      <origin xyz="-0.00029458 -1.102E-05 0.035775" rpy="0 0 0"/>
+      <mass value="0.58508"/>
+      <inertia ixx="0.00062907" ixy="-3.4247E-08" ixz="6.994E-08"
+               iyy="0.00063026" iyz="-4.8147E-08"  izz="0.00074925"/>
     </inertial>
   </link>
   <joint name="rslidar_joint" type="fixed">
-    <parent link="base_link"/>
+    <parent link="box_link"/>
     <child  link="rslidar"/>
-    <origin xyz="0 0 0.138" rpy="0 0 0"/>
+    <origin xyz="0.37655 0 0.003" rpy="0 0 0"/>
   </joint>
 
   <!-- ════════════════════════════════════════════════════════════════════

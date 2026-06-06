@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Licensed under the Apache License, Version 2.0.
+
+  Adapted from vf_robot_description/uvc1_virofighter.xacro (ViroFighter UVC1) —
+  the UVC lamps there are pure <cylinder> primitives, so no CAD/mesh is needed.
+
+  Pomona UVC lamp bar — horizontal cylindrical UV-C tubes mounted on the FRONT
+  of the mounting box (box_link), just BELOW the Robosense LiDAR (rslidar lives
+  at box-frame xyz 0.37655 0 0.003; box front face is at x ~= 0.428).
+
+  The cylinders' axes run along +Y (rpy roll = pi/2) so they appear as
+  horizontal bars spanning the width of the box front. All placement is
+  parameterised below — move the bar by editing lamp_bar_* only.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ── tunables ─────────────────────────────────────────────────────────
+       lamp_bar_x/y/z : position of the bar's mounting frame on box_link.
+       lamp_length    : tube length (along Y / width). box is ~0.32 m wide.
+       lamp_radius    : tube radius.
+       lamp_gap       : vertical spacing between the two stacked tubes.
+       Raise/lower the whole bar with lamp_bar_z; push it forward with _x. -->
+  <xacro:property name="lamp_bar_x"  value="0.40"/>
+  <xacro:property name="lamp_bar_y"  value="0.0"/>
+  <xacro:property name="lamp_bar_z"  value="-0.02"/>
+  <xacro:property name="lamp_length" value="0.28"/>
+  <xacro:property name="lamp_radius" value="0.02"/>
+  <xacro:property name="lamp_gap"    value="0.055"/>
+
+  <!-- One horizontal tube: axis rotated Z->Y so it lies flat across the front. -->
+  <xacro:macro name="uvc_tube" params="name z">
+    <visual name="${name}">
+      <origin xyz="0 0 ${z}" rpy="1.5708 0 0"/>
+      <geometry><cylinder radius="${lamp_radius}" length="${lamp_length}"/></geometry>
+      <material name="blue"/>
+    </visual>
+    <collision name="${name}_collision">
+      <origin xyz="0 0 ${z}" rpy="1.5708 0 0"/>
+      <geometry><cylinder radius="${lamp_radius}" length="${lamp_length}"/></geometry>
+    </collision>
+  </xacro:macro>
+
+  <link name="uvc_lamp_link">
+    <xacro:uvc_tube name="uvc_lamp_upper" z="0"/>
+    <xacro:uvc_tube name="uvc_lamp_lower" z="${-lamp_gap}"/>
+    <inertial>
+      <origin xyz="0 0 ${-lamp_gap/2}" rpy="0 0 0"/>
+      <mass value="0.3"/>
+      <inertia ixx="2.0e-03" ixy="0" ixz="0"
+               iyy="1.0e-04" iyz="0" izz="2.0e-03"/>
+    </inertial>
+  </link>
+
+  <joint name="uvc_lamp_joint" type="fixed">
+    <parent link="box_link"/>
+    <child  link="uvc_lamp_link"/>
+    <origin xyz="${lamp_bar_x} ${lamp_bar_y} ${lamp_bar_z}" rpy="0 0 0"/>
+  </joint>
+
+</robot>
