@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Licensed under the Apache License, Version 2.0.
+
+  UV-C cantilever (pomona_uvc only) — replaces the xArm6 arm.
+
+  Shape (top view):
+
+      [====panel_L====]            [====panel_R====]
+              \                            /
+               +============o============+
+                            ^ base/rod on the box
+
+  center 'o' = base/rod on the box; a cross-arm reaches out to each side; at
+  each end a FLAT, THIN horizontal panel spans a full strawberry bed and holds
+  4 fore-aft UV-C lamp tubes pointing down.
+
+  Bed coverage (per side, from robot centreline):
+    near edge ~0.40 m (= outer wheel edge) ... far edge ~1.10 m  -> 0.70 m bed,
+    panel centred at 0.75 m. Robot drives the furrow between two beds.
+
+  Two links: uvc_cantilever_link (rod + arm + panels, grey) and uvc_lamps_link
+  (tubes only, so Gazebo colours just the lamps blue — see gazebo_plugins.xacro).
+
+  Primitives only (no CAD). base_link frame; with stock wheels the ground is at
+  base_link z = -0.235, so arm_z = 0.50 -> panels ~0.735 m AGL, base mount
+  (z=0.26) is ~0.495 m AGL.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ── arm-base mount (kept from xArm6: meshes/arm/base.stl) ──────────── -->
+  <link name="uvc_base_link">
+    <visual>
+      <geometry><mesh filename="package://pomona_description/meshes/arm/base.stl"/></geometry>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry><mesh filename="package://pomona_description/meshes/arm/base.stl"/></geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.09103"/>
+      <mass value="2.7"/>
+      <inertia ixx="0.00494875" ixy="-3.5E-06" ixz="1.25E-05"
+               iyy="0.00494174" iyz="1.67E-06" izz="0.002219"/>
+    </inertial>
+  </link>
+  <joint name="uvc_base_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="uvc_base_link"/>
+    <origin xyz="0.212 0 0.26" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ── tunables (base_link frame) ────────────────────────────────────── -->
+  <xacro:property name="panel_y_c"   value="0.75"/>    <!-- panel centre (bed centre) from centreline -->
+  <xacro:property name="panel_width" value="0.70"/>    <!-- panel lateral width (Y) = bed width -->
+  <xacro:property name="arm_z"       value="0.50"/>    <!-- panel plane height (~0.78 m AGL) -->
+  <xacro:property name="panel_len"   value="0.73"/>    <!-- panel fore-aft length (= box length) -->
+  <xacro:property name="panel_x_c"   value="0.065"/>   <!-- panel fore-aft centre (= box centre) -->
+  <xacro:property name="panel_thick" value="0.012"/>   <!-- panel thickness (Z) — thin flat plate -->
+  <xacro:property name="beam_w"      value="0.035"/>   <!-- cross-arm square section -->
+  <xacro:property name="rod_x"       value="0.212"/>   <!-- mast over the arm base -->
+  <xacro:property name="rod_z_bot"   value="0.28"/>
+  <xacro:property name="rod_radius"  value="0.025"/>
+
+  <xacro:property name="tube_radius" value="0.008"/>   <!-- thin UV-C tube (~16 mm dia) -->
+  <!-- 4 tubes per side, spread across the bed width (offsets from panel centre) -->
+  <xacro:property name="tube_o1" value="0.27"/>
+  <xacro:property name="tube_o2" value="0.09"/>
+  <xacro:property name="lamp_z" value="${arm_z - panel_thick/2 - tube_radius}"/>
+
+  <!-- a flat, thin horizontal panel (grey) on one side -->
+  <xacro:macro name="uvc_panel" params="name side">
+    <visual name="${name}_panel">
+      <origin xyz="${panel_x_c} ${side*panel_y_c} ${arm_z}" rpy="0 0 0"/>
+      <geometry><box size="${panel_len} ${panel_width} ${panel_thick}"/></geometry>
+      <material name="grey"/>
+    </visual>
+    <collision name="${name}_panel_collision">
+      <origin xyz="${panel_x_c} ${side*panel_y_c} ${arm_z}" rpy="0 0 0"/>
+      <geometry><box size="${panel_len} ${panel_width} ${panel_thick}"/></geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- one fore-aft UV-C tube (blue) at an absolute Y -->
+  <xacro:macro name="uvc_tube" params="name y">
+    <visual name="uvc_lamp_${name}">
+      <origin xyz="${panel_x_c} ${y} ${lamp_z}" rpy="0 1.5708 0"/>
+      <geometry><cylinder radius="${tube_radius}" length="${panel_len}"/></geometry>
+      <material name="blue"/>
+    </visual>
+  </xacro:macro>
+
+  <!-- 4 tubes + one collision box, for one side -->
+  <xacro:macro name="uvc_lamp_side" params="name side">
+    <xacro:uvc_tube name="${name}_1" y="${side*(panel_y_c - tube_o1)}"/>
+    <xacro:uvc_tube name="${name}_2" y="${side*(panel_y_c - tube_o2)}"/>
+    <xacro:uvc_tube name="${name}_3" y="${side*(panel_y_c + tube_o2)}"/>
+    <xacro:uvc_tube name="${name}_4" y="${side*(panel_y_c + tube_o1)}"/>
+    <collision name="uvc_lamp_${name}_collision">
+      <origin xyz="${panel_x_c} ${side*panel_y_c} ${lamp_z}" rpy="0 0 0"/>
+      <geometry><box size="${panel_len} ${2*tube_o1 + 2*tube_radius} ${2*tube_radius}"/></geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- ── frame link: rod + cross-arm + flat panels ─────────────────────── -->
+  <link name="uvc_cantilever_link">
+    <visual name="uvc_rod">
+      <origin xyz="${rod_x} 0 ${(rod_z_bot + arm_z)/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${rod_radius}" length="${arm_z - rod_z_bot}"/></geometry>
+      <material name="grey"/>
+    </visual>
+    <collision name="uvc_rod_collision">
+      <origin xyz="${rod_x} 0 ${(rod_z_bot + arm_z)/2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="${rod_radius}" length="${arm_z - rod_z_bot}"/></geometry>
+    </collision>
+
+    <!-- cross-arm spanning out to both panel centres -->
+    <visual name="uvc_cross_arm">
+      <origin xyz="${rod_x} 0 ${arm_z}" rpy="0 0 0"/>
+      <geometry><box size="${beam_w} ${2*panel_y_c} ${beam_w}"/></geometry>
+      <material name="grey"/>
+    </visual>
+    <collision name="uvc_cross_arm_collision">
+      <origin xyz="${rod_x} 0 ${arm_z}" rpy="0 0 0"/>
+      <geometry><box size="${beam_w} ${2*panel_y_c} ${beam_w}"/></geometry>
+    </collision>
+
+    <xacro:uvc_panel name="left"  side="1"/>
+    <xacro:uvc_panel name="right" side="-1"/>
+
+    <inertial>
+      <origin xyz="${rod_x} 0 ${arm_z}" rpy="0 0 0"/>
+      <mass value="4.0"/>
+      <inertia ixx="0.90" ixy="0" ixz="0" iyy="0.20" iyz="0" izz="1.0"/>
+    </inertial>
+  </link>
+  <joint name="uvc_cantilever_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="uvc_cantilever_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ── lamps link: the UV-C tubes only (Gazebo colours these blue) ─────── -->
+  <link name="uvc_lamps_link">
+    <xacro:uvc_lamp_side name="left"  side="1"/>
+    <xacro:uvc_lamp_side name="right" side="-1"/>
+    <inertial>
+      <origin xyz="${panel_x_c} 0 ${lamp_z}" rpy="0 0 0"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.06" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.07"/>
+    </inertial>
+  </link>
+  <joint name="uvc_lamps_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="uvc_lamps_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

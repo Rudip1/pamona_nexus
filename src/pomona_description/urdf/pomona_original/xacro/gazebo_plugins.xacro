@@ -9,7 +9,7 @@
   Plugins:
     - libgazebo_ros_diff_drive.so       — Scout V2 skid-steer (4 wheels)
     - libgazebo_ros_joint_state_publisher.so — joint_states for arm + gripper
-    - libgazebo_ros_ray_sensor.so       — rslidar /scan + /points
+    - libgazebo_ros_ray_sensor.so       — rslidar (gpu_ray) → /scan
     - libgazebo_ros_camera.so           — D435 RGB + depth
     - libgazebo_ros_imu_sensor.so       — Xsens IMU /imu/data
 -->
@@ -34,7 +34,7 @@
       <right_joint>rear_right_wheel</right_joint>
 
       <wheel_separation>0.58306</wheel_separation>
-      <wheel_diameter>0.32918</wheel_diameter>
+      <wheel_diameter>${2 * wheel_radius}</wheel_diameter>
 
       <max_wheel_torque>50.0</max_wheel_torque>
       <max_wheel_acceleration>2.0</max_wheel_acceleration>
@@ -59,7 +59,11 @@
        Robosense LiDAR (publishes /scan via ray_sensor)
        ════════════════════════════════════════════════════════════════════ -->
   <gazebo reference="rslidar">
-    <sensor name="rslidar" type="ray">
+    <!-- gpu_ray (not CPU "ray"): the CPU ray path (ODEMultiRayShape) can segfault
+         in dSpaceCollide2 when gzserver has no rendering context. Here the D435
+         camera happens to provide one, but gpu_ray is the robust choice (renders
+         the scan instead of ODE-raycasting) and is faster. -->
+    <sensor name="rslidar" type="gpu_ray">
       <always_on>true</always_on>
       <visualize>true</visualize>
       <update_rate>10</update_rate>

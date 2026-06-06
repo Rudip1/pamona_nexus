@@ -2,12 +2,13 @@
 # Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
 # Licensed under the Apache License, Version 2.0.
 #
-# Spawn Pomona in Gazebo from the pre-baked SDF file at
-# pomona_gazebo/models/pomona/model.sdf  (SDF pipeline).
+# Shared SDF-spawn helper (SDF pipeline). Takes an `sdf_file` arg; the
+# per-model launches (empty_world_pomona_{original,uvc}_sdf.launch.py) pass
+# their own models/pomona_<model>/model.sdf. Default below is pomona_original.
 #
-# Regenerate that SDF by running:
+# Regenerate the SDFs by running:
 #   bash $(ros2 pkg prefix pomona_description)/share/pomona_description/scripts/xacro_to_urdf.sh
-# then converting to SDF (e.g. with `gz sdf -p`).
+# then converting each *_sim.urdf to SDF (e.g. with `gz sdf -p`).
 
 import os
 
@@ -20,7 +21,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_share = get_package_share_directory("pomona_gazebo")
-    sdf_file  = os.path.join(pkg_share, "models", "pomona", "model.sdf")
+    sdf_file  = os.path.join(pkg_share, "models", "pomona_original", "model.sdf")
 
     x_pose = LaunchConfiguration("x_pose", default="0.0")
     y_pose = LaunchConfiguration("y_pose", default="0.0")

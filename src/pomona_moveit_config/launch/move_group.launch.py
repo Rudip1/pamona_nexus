@@ -6,7 +6,7 @@
 # Real implementation needs MoveItConfigsBuilder; for now this is a marker.
 #
 # TODO  use moveit_configs_utils.MoveItConfigsBuilder to assemble parameters
-# from config/ + pomona_description/urdf/xacro/pomona.xacro.
+# from config/ + pomona_description/urdf/pomona_original/xacro/pomona.xacro.
 # See https://moveit.picknik.ai/main/doc/examples/moveit_configs_builder/
 
 from launch import LaunchDescription

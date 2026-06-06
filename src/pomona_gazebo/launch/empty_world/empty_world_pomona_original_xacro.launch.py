@@ -2,16 +2,17 @@
 # Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
 # Licensed under the Apache License, Version 2.0.
 #
-# Empty world, SDF pipeline.
-# Spawns Pomona from models/pomona/model.sdf (pre-baked) instead of from
-# /robot_description. RSP still runs so TF tree is published — Gazebo SDF
-# only carries the diff_drive plugin and link geometry.
+# Empty world, xacro pipeline — ORIGINAL model (stock Scout V2 wheels, no UV-C).
 #
-# Run:  ros2 launch pomona_gazebo empty_world_sdf.launch.py
+# Launch graph:
+#   gzserver / gzclient        → Gazebo physics + GUI
+#   robot_state_publisher      → pomona_state_publisher_original (use_sim:=true)
+#   spawn_entity               → reads /robot_description (delayed 5 s)
+#   controller spawners        → joint_state_broadcaster, xarm6, ag95 (8 s)
+#   go-home trajectory         → raise arm to fold (14 s)
+#   rqt_robot_steering         → /cmd_vel teleop
 #
-# NOTE: models/pomona/model.sdf is a placeholder until you generate it from
-# the xacro source. See pomona_description/scripts/xacro_to_urdf.sh and
-# `gz sdf -p` for conversion.
+# Run:  ros2 launch pomona_gazebo empty_world_pomona_original_xacro.launch.py
 
 import os
 
@@ -19,6 +20,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
+    ExecuteProcess,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
     TimerAction,
@@ -43,7 +45,7 @@ def generate_launch_description():
     declare_theta  = DeclareLaunchArgument("theta",  default_value="0.0")
     declare_use_teleop = DeclareLaunchArgument(
         "use_teleop", default_value="true",
-        description="Start rqt_robot_steering",
+        description="Start rqt_robot_steering for /cmd_vel",
     )
 
     use_sim_time = LaunchConfiguration("use_sim_time")
@@ -56,30 +58,21 @@ def generate_launch_description():
     gazebo_resource_path = SetEnvironmentVariable(
         name="GAZEBO_RESOURCE_PATH",
         value=os.pathsep.join(
-            [
-                os.path.dirname(pkg_pomona_desc),
-                "/usr/share/gazebo-11",
-                "/opt/ros/humble/share",
-            ]
+            [os.path.dirname(pkg_pomona_desc), "/usr/share/gazebo-11",
+             "/opt/ros/humble/share"]
         ),
     )
     gazebo_model_path = SetEnvironmentVariable(
         name="GAZEBO_MODEL_PATH",
         value=os.pathsep.join(
-            [
-                os.path.join(pkg_pomona_gazebo, "models"),
-                os.path.dirname(pkg_pomona_desc),
-                "/usr/share/gazebo-11/models",
-            ]
+            [os.path.join(pkg_pomona_gazebo, "models"),
+             os.path.dirname(pkg_pomona_desc), "/usr/share/gazebo-11/models"]
         ),
     )
     gazebo_plugin_path = SetEnvironmentVariable(
         name="GAZEBO_PLUGIN_PATH",
         value=os.pathsep.join(
-            [
-                "/opt/ros/humble/lib",
-                "/usr/lib/x86_64-linux-gnu/gazebo-11/plugins",
-            ]
+            ["/opt/ros/humble/lib", "/usr/lib/x86_64-linux-gnu/gazebo-11/plugins"]
         ),
     )
 
@@ -89,7 +82,6 @@ def generate_launch_description():
         ),
         launch_arguments={"world": world_file}.items(),
     )
-
     gzclient = TimerAction(
         period=3.0,
         actions=[
@@ -103,7 +95,7 @@ def generate_launch_description():
 
     rsp = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(launch_dir, "pomona_state_publisher.launch.py")
+            os.path.join(launch_dir, "pomona_state_publisher_original.launch.py")
         ),
         launch_arguments={"use_sim_time": use_sim_time}.items(),
     )
@@ -113,16 +105,44 @@ def generate_launch_description():
         actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
-                    os.path.join(launch_dir, "spawn_sdf.launch.py")
+                    os.path.join(launch_dir, "spawn_xacro.launch.py")
                 ),
-                launch_arguments={
-                    "x_pose": x_pose,
-                    "y_pose": y_pose,
-                    "theta":  theta,
-                }.items(),
+                launch_arguments={"x_pose": x_pose, "y_pose": y_pose,
+                                  "theta": theta}.items(),
             )
         ],
     )
+
+    def _spawner(name):
+        return Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=[name, "--controller-manager", "/controller_manager",
+                       "--controller-manager-timeout", "60"],
+            output="screen",
+        )
+
+    controller_spawners = TimerAction(
+        period=8.0,
+        actions=[
+            _spawner("joint_state_broadcaster"),
+            _spawner("xarm6_traj_controller"),
+            _spawner("ag95_gripper_controller"),
+        ],
+    )
+
+    home_pose = ExecuteProcess(
+        cmd=[
+            "ros2", "topic", "pub", "--once",
+            "/xarm6_traj_controller/joint_trajectory",
+            "trajectory_msgs/msg/JointTrajectory",
+            "{joint_names: [joint1, joint2, joint3, joint4, joint5, joint6], "
+            "points: [{positions: [0.0, -0.5, -0.6, 0.0, 1.1, 0.0], "
+            "time_from_start: {sec: 2}}]}",
+        ],
+        output="screen",
+    )
+    go_home = TimerAction(period=14.0, actions=[home_pose])
 
     teleop = Node(
         package="rqt_robot_steering",
@@ -147,6 +167,8 @@ def generate_launch_description():
             gzclient,
             rsp,
             spawn,
+            controller_spawners,
+            go_home,
             teleop,
         ]
     )

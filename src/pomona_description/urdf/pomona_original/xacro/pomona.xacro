@@ -20,16 +20,16 @@
   <xacro:property name="use_sim" value="$(arg use_sim)"/>
 
   <!-- ── shared utilities ─────────────────────────────────────────────── -->
-  <xacro:include filename="$(find pomona_description)/urdf/xacro/common_properties.xacro"/>
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_original/xacro/common_properties.xacro"/>
 
   <!-- ── mobile base ──────────────────────────────────────────────────── -->
-  <xacro:include filename="$(find pomona_description)/urdf/xacro/scout_v2.xacro"/>
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_original/xacro/scout_v2.xacro"/>
 
   <!-- ── mounting box (white cuboid carrying arm + display) ───────────── -->
-  <xacro:include filename="$(find pomona_description)/urdf/xacro/mount.xacro"/>
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_original/xacro/mount.xacro"/>
 
   <!-- ── manipulator ──────────────────────────────────────────────────── -->
-  <xacro:include filename="$(find pomona_description)/urdf/xacro/xarm6.xacro"/>
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_original/xacro/xarm6.xacro"/>
   <xacro:xarm6 prefix=""/>
 
   <!-- Mount xArm6 on Scout base: 0.212 forward of base centre, 0.26 up
@@ -42,7 +42,7 @@
   </joint>
 
   <!-- ── gripper ──────────────────────────────────────────────────────── -->
-  <xacro:include filename="$(find pomona_description)/urdf/xacro/ag95_gripper.xacro"/>
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_original/xacro/ag95_gripper.xacro"/>
   <xacro:ag95_gripper prefix=""/>
 
   <!-- Attach AG95 base to xArm6 end-effector -->
@@ -53,15 +53,12 @@
   </joint>
 
   <!-- ── sensors (LiDAR, IMU, camera links) ───────────────────────────── -->
-  <xacro:include filename="$(find pomona_description)/urdf/xacro/sensors.xacro"/>
-
-  <!-- ── UVC lamp bar (front of box, below LiDAR) ─────────────────────── -->
-  <xacro:include filename="$(find pomona_description)/urdf/xacro/uvc_lamps.xacro"/>
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_original/xacro/sensors.xacro"/>
 
   <!-- ── Gazebo plugins + ros2_control (conditional) ──────────────────── -->
   <xacro:if value="${use_sim}">
-    <xacro:include filename="$(find pomona_description)/urdf/xacro/gazebo_plugins.xacro"/>
-    <xacro:include filename="$(find pomona_description)/urdf/xacro/ros2_control.xacro"/>
+    <xacro:include filename="$(find pomona_description)/urdf/pomona_original/xacro/gazebo_plugins.xacro"/>
+    <xacro:include filename="$(find pomona_description)/urdf/pomona_original/xacro/ros2_control.xacro"/>
   </xacro:if>
 
 </robot>

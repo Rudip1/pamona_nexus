@@ -42,7 +42,7 @@ source install/setup.bash
 
 Simulation:
 ```bash
-ros2 launch pomona_gazebo empty_world_xacro.launch.py
+ros2 launch pomona_gazebo empty_world_pomona_uvc_xacro.launch.py
 # Scout + mounting box + xArm6 + AG95 spawn; the base drives from the
 # rqt_robot_steering slider, and the arm/gripper are controlled via
 # gazebo_ros2_control (arm rises to a home fold and holds).

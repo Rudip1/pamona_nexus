@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Licensed under the Apache License, Version 2.0.
+
+  Adapted from scout_xarm_base (agilex, ROS 1) — see goldmines/.../scout_xarm_base.
+  Meshes (box_link, display_link, laser_link) are SolidWorks URDF-exporter STLs;
+  attribution recorded in meshes/mount/ATTRIBUTION.
+
+  Pomona mounting box — the white cuboid bolted on top of the Scout V2 deck that
+  physically carries the xArm6, the LiDAR and the operator display. Inertials are
+  taken verbatim from the original SolidWorks export.
+
+       base_link =(0 0 0.113)=> box_link =(display_joint)=> display_link
+  (the arm mounts on base_link at 0.212 0 0.26; the LiDAR `rslidar` lives in
+   sensors.xacro and uses the laser_link mesh as its visual.)
+-->
+<robot name="pomona_mount" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ── white support box ────────────────────────────────────────────── -->
+  <link name="box_link">
+    <inertial>
+      <origin xyz="0.017247 -0.0057664 0.13638" rpy="0 0 0"/>
+      <mass value="2.1688"/>
+      <inertia ixx="0.019403" ixy="-1.1237E-05" ixz="-0.00039599"
+               iyy="0.066236" iyz="5.3962E-07"  izz="0.078079"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pomona_description/meshes/mount/box_link.stl"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <origin xyz="0.02 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pomona_description/meshes/mount/box_link.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="scout_with_box" type="fixed">
+    <origin xyz="0 0 0.113" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child  link="box_link"/>
+  </joint>
+
+  <!-- ── operator display panel ───────────────────────────────────────── -->
+  <link name="display_link">
+    <inertial>
+      <origin xyz="0.0013019 -6.9629E-05 0.00060167" rpy="0 0 0"/>
+      <mass value="0.58424"/>
+      <inertia ixx="0.0047864" ixy="1.6495E-08" ixz="1.4213E-06"
+               iyy="0.0014088" iyz="8.2645E-08"  izz="0.0034011"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pomona_description/meshes/mount/display_link.stl"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pomona_description/meshes/mount/display_link.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="display_joint" type="fixed">
+    <origin xyz="-0.40294 -0.00097898 0.18999" rpy="0 -0.28807 3.1416"/>
+    <parent link="box_link"/>
+    <child  link="display_link"/>
+  </joint>
+
+</robot>

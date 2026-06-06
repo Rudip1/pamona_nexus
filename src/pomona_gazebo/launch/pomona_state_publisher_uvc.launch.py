@@ -2,17 +2,17 @@
 # Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
 # Licensed under the Apache License, Version 2.0.
 #
-# Robot state publisher for the Gazebo pipeline.
-# Processes pomona.xacro with use_sim:=true (Gazebo plugins included)
-# and publishes /robot_description + the TF tree under base_link.
+# Robot state publisher for the Gazebo pipeline — UV-C sim model
+# (urdf/pomona_uvc/xacro/pomona.xacro, oversized wheels + cantilever UV-C boom).
+# Processes the xacro with use_sim:=true and publishes /robot_description.
 #
-# NOTE: XML comments are stripped from the generated URDF before it is
-# published. gazebo_ros2_control (Humble, 0.4.x) re-passes robot_description
-# to the controller_manager as a `--param` CLI override; rcl's argument
-# parser rejects the non-ASCII box-drawing characters used in our xacro
-# comment headers ("Couldn't parse parameter override rule"). Stripping
-# comments keeps the source style intact while making the runtime URDF safe.
+# NOTE: XML comments are stripped from the generated URDF before publishing.
+# gazebo_ros2_control (Humble) re-passes robot_description to the
+# controller_manager as a `--param` CLI override; rcl rejects the non-ASCII
+# box-drawing characters in our xacro comment headers. Stripping keeps the
+# source style intact while making the runtime URDF safe.
 
+import os
 import re
 import subprocess
 
@@ -22,20 +22,15 @@ from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
-import os
-
 
 def _launch_setup(context, *args, **kwargs):
     xacro_path = os.path.join(
         get_package_share_directory("pomona_description"),
-        "urdf", "xacro", "pomona.xacro",
+        "urdf", "pomona_uvc", "xacro", "pomona.xacro",
     )
     use_sim_time = LaunchConfiguration("use_sim_time").perform(context)
 
-    # Run xacro, then drop XML comments (see header note).
-    urdf = subprocess.check_output(
-        ["xacro", xacro_path, "use_sim:=true"], text=True
-    )
+    urdf = subprocess.check_output(["xacro", xacro_path, "use_sim:=true"], text=True)
     urdf = re.sub(r"<!--.*?-->", "", urdf, flags=re.DOTALL)
 
     return [
@@ -44,12 +39,8 @@ def _launch_setup(context, *args, **kwargs):
             executable="robot_state_publisher",
             name="robot_state_publisher",
             output="screen",
-            parameters=[
-                {
-                    "robot_description": urdf,
-                    "use_sim_time": use_sim_time == "true",
-                }
-            ],
+            parameters=[{"robot_description": urdf,
+                         "use_sim_time": use_sim_time == "true"}],
         )
     ]
 

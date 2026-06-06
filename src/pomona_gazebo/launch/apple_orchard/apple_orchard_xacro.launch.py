@@ -2,7 +2,7 @@
 # Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
 # Licensed under the Apache License, Version 2.0.
 #
-# Placeholder — clones empty_world_xacro.launch.py with the world file
+# Placeholder — clones empty_world_pomona_uvc_xacro.launch.py with the world file
 # swapped to worlds/apple_orchard.world. Replace this with a real launch when the
 # apple_orchard environment is built.
 
@@ -15,7 +15,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
     pkg = get_package_share_directory("pomona_gazebo")
-    inner = os.path.join(pkg, "launch", "empty_world", "empty_world_xacro.launch.py")
+    inner = os.path.join(pkg, "launch", "empty_world", "empty_world_pomona_uvc_xacro.launch.py")
     return LaunchDescription([
         # SetLaunchConfiguration only affects substitutions that read it.
         # The launch we're including hard-codes the world path, so for now

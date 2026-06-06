@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Author:  Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Project: Pomona Nexus
+-->
+<robot name="common_properties" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Materials -->
+  <material name="black"><color rgba="0.0 0.0 0.0 1.0"/></material>
+  <material name="dark"><color rgba="0.3 0.3 0.3 1.0"/></material>
+  <material name="grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
+  <material name="silver"><color rgba="0.753 0.753 0.753 1.0"/></material>
+  <material name="white"><color rgba="1.0 1.0 1.0 1.0"/></material>
+  <material name="red"><color rgba="0.8 0.0 0.0 1.0"/></material>
+  <material name="green"><color rgba="0.0 0.8 0.0 1.0"/></material>
+  <material name="blue"><color rgba="0.0 0.0 0.8 1.0"/></material>
+  <material name="orange"><color rgba="1.0 0.424 0.039 1.0"/></material>
+  <material name="brown"><color rgba="0.871 0.812 0.765 1.0"/></material>
+
+  <!-- Constants -->
+  <xacro:property name="M_PI" value="3.14159"/>
+
+  <!-- Reusable inertia macros -->
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertia ixx="${m*(y*y+z*z)/12}" ixy="0" ixz="0"
+             iyy="${m*(x*x+z*z)/12}" iyz="0"
+             izz="${m*(x*x+y*y)/12}"/>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertia ixx="${m*(3*r*r+h*h)/12}" ixy="0" ixz="0"
+             iyy="${m*(3*r*r+h*h)/12}" iyz="0"
+             izz="${m*r*r/2}"/>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia" params="m r">
+    <inertia ixx="${2*m*r*r/5}" ixy="0" ixz="0"
+             iyy="${2*m*r*r/5}" iyz="0"
+             izz="${2*m*r*r/5}"/>
+  </xacro:macro>
+
+</robot>

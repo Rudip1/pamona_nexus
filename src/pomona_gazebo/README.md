@@ -8,7 +8,7 @@ launches live in `pomona_bringup`. URDF and meshes come from
 
 | World            | Status        | Launch                                              |
 |------------------|---------------|-----------------------------------------------------|
-| `empty_world`    | ★ working     | `empty_world_xacro.launch.py` / `empty_world_sdf.launch.py` |
+| `empty_world`    | ★ working     | `empty_world_pomona_uvc_xacro.launch.py` / `empty_world_pomona_uvc_sdf.launch.py` |
 | `strawberry`     | placeholder   | `strawberry_xacro.launch.py` / `strawberry_sdf.launch.py` |
 | `grapevine`      | placeholder   | `grapevine_xacro.launch.py` / `grapevine_sdf.launch.py`   |
 | `apple_orchard`  | placeholder   | `apple_orchard_xacro.launch.py` / `apple_orchard_sdf.launch.py` |
@@ -22,20 +22,26 @@ graph can be exercised early. Drop your environment SDFs into
 
 Two parallel ways to spawn Pomona — pick one per session:
 
+There are two robot models — `pomona_original` (stock wheels, full xArm6 +
+AG95 + D435 camera + ros2_control) and `pomona_uvc` (oversized wheels + UV-C
+boom, no arm/gripper/camera/ros2_control). Each has both an xacro and an sdf
+launch: `empty_world_pomona_<model>_{xacro,sdf}.launch.py`.
+
 ### Xacro pipeline (recommended)
-- `robot_state_publisher` processes `pomona.xacro` (use_sim:=true).
+- `robot_state_publisher` processes `pomona_<model>/xacro/pomona.xacro` (use_sim:=true).
 - `/robot_description` carries the full URDF *with* Gazebo plugins.
 - `spawn_entity.py -topic robot_description` spawns into Gazebo.
 - Edit xacro → relaunch → changes picked up immediately.
 
 ### SDF pipeline
-- `spawn_entity.py -file models/pomona/model.sdf` spawns a pre-baked SDF.
-- Regenerate with:
+- `spawn_entity.py -file models/pomona_<model>/model.sdf` spawns a pre-baked SDF.
+- The SDFs are **generated**, not placeholders. Regenerate after editing xacro:
   ```bash
   bash $(ros2 pkg prefix pomona_description)/share/pomona_description/scripts/xacro_to_urdf.sh
-  gz sdf -p urdf/urdf/pomona_sim.urdf > models/pomona/model.sdf
+  # then per model (run from the pomona_description source dir):
+  gz sdf -p urdf/pomona_original/urdf/pomona_original_sim.urdf > <pomona_gazebo>/models/pomona_original/model.sdf
+  gz sdf -p urdf/pomona_uvc/urdf/pomona_uvc_sim.urdf           > <pomona_gazebo>/models/pomona_uvc/model.sdf
   ```
-- `models/pomona/model.sdf` is a placeholder until you run the above.
 
 ## Day-1 verification
 
@@ -44,31 +50,41 @@ cd /home/pravin/pomona_nexus
 colcon build --symlink-install
 source install/setup.bash
 
-ros2 launch pomona_gazebo empty_world_xacro.launch.py
+ros2 launch pomona_gazebo empty_world_pomona_uvc_xacro.launch.py
 # → gzserver+gzclient open, Pomona spawns at origin, rqt_robot_steering pops up.
 # Slide forward/turn — base should drive on the empty plane.
 ```
 
 ## Topics in sim
 
-| Topic | Type | Publisher |
-|---|---|---|
-| `/cmd_vel` | `geometry_msgs/Twist` | `rqt_robot_steering` → diff_drive plugin |
-| `/odom` | `nav_msgs/Odometry` | diff_drive plugin |
-| `/scan` | `sensor_msgs/LaserScan` | rslidar ray_sensor plugin |
-| `/imu/data` | `sensor_msgs/Imu` | imu plugin |
-| `/camera/color/image_raw` | `sensor_msgs/Image` | D435 RGB camera plugin |
-| `/camera/depth/image_rect_raw` | `sensor_msgs/Image` | D435 depth camera plugin |
-| `/camera/depth/points` | `sensor_msgs/PointCloud2` | D435 depth camera plugin |
-| `/joint_states` | `sensor_msgs/JointState` | `joint_state_broadcaster` (ros2_control) |
-| `/tf`, `/tf_static` | TF | robot_state_publisher + diff_drive plugin |
+Base/lidar/IMU topics are present for **both** models. The camera and
+`joint_states`-from-ros2_control rows are **pomona_original only** (pomona_uvc
+has no arm/gripper/camera, so no ros2_control and no camera topics).
 
-## Arm + gripper control (gazebo_ros2_control)
+| Topic | Type | Publisher | Models |
+|---|---|---|---|
+| `/cmd_vel` | `geometry_msgs/Twist` | `rqt_robot_steering` → diff_drive plugin | both |
+| `/odom` | `nav_msgs/Odometry` | diff_drive plugin | both |
+| `/scan` | `sensor_msgs/LaserScan` | rslidar `gpu_ray` sensor (`libgazebo_ros_ray_sensor.so`) | both |
+| `/imu/data` | `sensor_msgs/Imu` | imu plugin | both |
+| `/tf`, `/tf_static` | TF | robot_state_publisher + diff_drive plugin | both |
+| `/camera/color/image_raw` | `sensor_msgs/Image` | D435 RGB camera plugin | original |
+| `/camera/depth/image_rect_raw` | `sensor_msgs/Image` | D435 depth camera plugin | original |
+| `/camera/depth/points` | `sensor_msgs/PointCloud2` | D435 depth camera plugin | original |
+| `/joint_states` | `sensor_msgs/JointState` | `joint_state_broadcaster` (ros2_control) | original |
 
-The xacro pipeline includes `ros2_control.xacro` (sim only) and the
-`libgazebo_ros2_control.so` plugin, which runs a `controller_manager` inside
-Gazebo. `empty_world_xacro.launch.py` spawns three controllers and then sends a
-one-shot trajectory to raise the arm to its home fold.
+> The lidar uses `type="gpu_ray"` (not CPU `ray`): the CPU ray path segfaults
+> gzserver when there's no rendering context — which is exactly pomona_uvc's
+> case (no camera). See `docs/sim_runbook.md` and CLAUDE.md "Gotchas".
+
+## Arm + gripper control (gazebo_ros2_control) — pomona_original only
+
+`pomona_uvc` has no arm, so it loads no ros2_control and spawns no controllers.
+For **pomona_original**, the xacro pipeline includes `ros2_control.xacro` (sim
+only) and the `libgazebo_ros2_control.so` plugin, which runs a
+`controller_manager` inside Gazebo. `empty_world_pomona_original_xacro.launch.py`
+spawns three controllers and then sends a one-shot trajectory to raise the arm
+to its home fold.
 
 | Controller | Type | Interface |
 |---|---|---|
@@ -80,6 +96,6 @@ Controller params: `config/gazebo_ros2_control_sim.yaml`. Quick checks and the
 full failure catalogue (diff-drive `num_wheel_pairs`, the rcl comment-parse
 issue, arm droop) are in **`docs/sim_runbook.md`**.
 
-> Note: `pomona_state_publisher.launch.py` strips XML comments from the URDF
-> before publishing — required so `gazebo_ros2_control` can parse it. Do not
-> revert that to a plain `Command([xacro …])` value.
+> Note: `pomona_state_publisher_{original,uvc}.launch.py` strip XML comments
+> from the URDF before publishing — required so `gazebo_ros2_control` can parse
+> it. Do not revert to a plain `Command([xacro …])` value.

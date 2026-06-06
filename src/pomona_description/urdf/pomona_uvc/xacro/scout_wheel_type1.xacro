@@ -3,13 +3,13 @@
   Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
   Licensed under the Apache License, Version 2.0.
 
-  Adapted from agilexrobotics/scout_ros — scout_description/urdf/scout_wheel_type2.xacro
+  Adapted from agilexrobotics/scout_ros — scout_description/urdf/scout_wheel_type1.xacro
   Original: Copyright (c) 2015 Clearpath Robotics  /  Copyright (c) 2020 Weston Robot
   License : BSD-3-Clause
 -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="scout_wheel">
 
-  <xacro:macro name="scout_wheel_type2" params="wheel_prefix *joint_pose">
+  <xacro:macro name="scout_wheel_type1" params="wheel_prefix *joint_pose">
     <link name="${wheel_prefix}_wheel_link">
       <inertial>
         <mass value="3"/>
@@ -21,7 +21,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://pomona_description/meshes/wheels/wheel_type2.dae"/>
+          <mesh filename="package://pomona_description/meshes/wheels/wheel_type1.dae" scale="${wheel_scale} ${wheel_scale} ${wheel_scale}"/>
         </geometry>
       </visual>
       <collision>
@@ -39,6 +39,7 @@
       <axis xyz="0 -1 0" rpy="0 0 0"/>
     </joint>
 
+    <!-- Friction for skid-steer -->
     <gazebo reference="${wheel_prefix}_wheel_link">
       <mu1>1.0</mu1>
       <mu2>1.0</mu2>

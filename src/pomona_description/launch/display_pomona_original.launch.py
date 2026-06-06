@@ -1,21 +1,13 @@
 #!/usr/bin/env python3
 # Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+# Licensed under the Apache License, Version 2.0.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Standalone URDF viewer for the ORIGINAL model (stock Scout V2 wheels, no UV-C).
+# Loads urdf/pomona_original/xacro/pomona.xacro (use_sim:=false) through
+# robot_state_publisher, joint_state_publisher_gui sliders, and RViz2.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Project: Pomona Nexus
-#
-# Standalone URDF viewer — no Gazebo, no real robot.
-# Loads pomona.xacro (use_sim:=false) through robot_state_publisher,
-# starts joint_state_publisher_gui for interactive slider control,
-# and opens RViz2 with the bundled model.rviz config.
-#
-# Run:  ros2 launch pomona_description display.launch.py
-#       ros2 launch pomona_description display.launch.py use_gui:=false
+# Run:  ros2 launch pomona_description display_pomona_original.launch.py
+#       ros2 launch pomona_description display_pomona_original.launch.py use_gui:=false
 
 import os
 
@@ -38,14 +30,11 @@ def generate_launch_description():
     pkg_share = get_package_share_directory("pomona_description")
 
     declare_use_gui = DeclareLaunchArgument(
-        "use_gui",
-        default_value="true",
+        "use_gui", default_value="true",
         description="Launch joint_state_publisher_gui (sliders) instead of headless",
     )
     declare_use_rviz = DeclareLaunchArgument(
-        "use_rviz",
-        default_value="true",
-        description="Launch RViz2",
+        "use_rviz", default_value="true", description="Launch RViz2",
     )
     declare_rviz_config = DeclareLaunchArgument(
         "rviz_config",
@@ -54,11 +43,10 @@ def generate_launch_description():
     )
 
     xacro_path = PathJoinSubstitution(
-        [FindPackageShare("pomona_description"), "urdf", "xacro", "pomona.xacro"]
+        [FindPackageShare("pomona_description"),
+         "urdf", "pomona_original", "xacro", "pomona.xacro"]
     )
 
-    # Wrap in ParameterValue(value_type=str) — Humble parses YAML by default and
-    # will crash on URDF XML otherwise.
     robot_description = ParameterValue(
         Command([FindExecutable(name="xacro"), " ", xacro_path, " use_sim:=false"]),
         value_type=str,

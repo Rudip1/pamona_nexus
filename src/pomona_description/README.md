@@ -3,6 +3,19 @@
 URDF / xacro / meshes for **Pomona** — shared by `pomona_gazebo` (sim) and
 `pomona_bringup` (real robot). Launch-only package, no nodes.
 
+## Two robot models
+
+The description ships **two self-contained models**, each under
+`urdf/<model>/{xacro,urdf}` (xacro source + generated flat URDF):
+
+| Model | Folder | Wheels | UV-C | Used by |
+|-------|--------|--------|------|---------|
+| **pomona_original** | `urdf/pomona_original/` | stock Scout V2 (radius 0.165, wheelbase 0.498) | none | `pomona_bringup` (real), `display_pomona_original.launch.py`, MoveIt |
+| **pomona_uvc** | `urdf/pomona_uvc/` | oversized (scale 1.25, wheelbase 0.598, ~0.18 m clearance) | front bar + cantilever boom | `pomona_gazebo` (sim) |
+
+Each folder is a full copy of the xacro set, so the two evolve independently.
+Regenerate the flat URDFs with `bash scripts/xacro_to_urdf.sh`.
+
 ## Robot composition
 
 | Component        | Make / Model            | Xacro file              |
@@ -10,12 +23,18 @@ URDF / xacro / meshes for **Pomona** — shared by `pomona_gazebo` (sim) and
 | Mobile base      | AgileX Scout V2         | `scout_v2.xacro`        |
 | Wheels (4×)      | scout type1 / type2     | `scout_wheel_type{1,2}.xacro` |
 | Mounting box     | white deck cuboid + display | `mount.xacro`       |
-| Manipulator      | UFactory xArm6 (6-DOF)  | `xarm6.xacro`           |
-| Gripper          | DH Robotics AG95        | `ag95_gripper.xacro`    |
-| Sensors          | rslidar / Xsens / D435  | `sensors.xacro`         |
+| Manipulator      | UFactory xArm6 (6-DOF)  | `xarm6.xacro` (original only) |
+| Gripper          | DH Robotics AG95        | `ag95_gripper.xacro` (original only) |
+| UV-C boom        | cantilever + lamps      | `uvc_cantilever.xacro` (uvc only) |
+| Sensors          | rslidar / Xsens (+ D435 on original) | `sensors.xacro` |
 | Sim plugins      | gazebo_ros classic 11   | `gazebo_plugins.xacro`  |
-| Sim control      | gazebo_ros2_control     | `ros2_control.xacro` (sim only) |
+| Sim control      | gazebo_ros2_control     | `ros2_control.xacro` (original, sim only) |
 | Root             | combines all above      | `pomona.xacro`          |
+
+> The two models share most of the set. **pomona_original** carries the arm
+> (`xarm6.xacro`), gripper (`ag95_gripper.xacro`), D435 camera, and
+> `ros2_control.xacro`. **pomona_uvc** drops all of those and adds
+> `uvc_cantilever.xacro` instead — so it has no controllers and no camera.
 
 `mount.xacro` adds the white box (`box_link`) that physically carries the arm,
 LiDAR, and display — ported from the goldmines `scout_xarm_base` package.
@@ -29,7 +48,8 @@ arm is driven by vendor `xarm_ros2`.
 
 ### Standalone viewer (no Gazebo, no real robot)
 ```bash
-ros2 launch pomona_description display.launch.py
+ros2 launch pomona_description display_pomona_original.launch.py   # stock, no UV-C
+ros2 launch pomona_description display_pomona_uvc.launch.py        # scaled + UV-C boom
 ```
 
 ### From another package (xacro at launch time)
@@ -39,7 +59,7 @@ from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 xacro_path = PathJoinSubstitution([
-    FindPackageShare("pomona_description"), "urdf", "xacro", "pomona.xacro"
+    FindPackageShare("pomona_description"), "urdf", "pomona_original", "xacro", "pomona.xacro"
 ])
 robot_description = ParameterValue(
     Command([FindExecutable(name="xacro"), " ", xacro_path, " use_sim:=true"]),
@@ -53,7 +73,8 @@ block is included.
 ### Pre-baked URDF (for SDF pipeline)
 ```bash
 bash scripts/xacro_to_urdf.sh
-# generates urdf/urdf/{pomona.urdf, pomona_sim.urdf}
+# generates, per model, urdf/<model>/urdf/{<model>.urdf, <model>_sim.urdf}
+# e.g. urdf/pomona_original/urdf/pomona_original_sim.urdf
 ```
 
 ## Geometry reference

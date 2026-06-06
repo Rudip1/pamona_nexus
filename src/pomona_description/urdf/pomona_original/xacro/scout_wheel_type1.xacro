@@ -21,7 +21,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://pomona_description/meshes/wheels/wheel_type1.dae"/>
+          <mesh filename="package://pomona_description/meshes/wheels/wheel_type1.dae" scale="${wheel_scale} ${wheel_scale} ${wheel_scale}"/>
         </geometry>
       </visual>
       <collision>

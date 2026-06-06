@@ -17,6 +17,12 @@
 How to bring up Pomona in Gazebo Classic 11, what should happen, how to verify
 each subsystem, and how to fix the failures we have already hit.
 
+This runbook covers **pomona_original** (the full robot: xArm6 + AG95 + D435 +
+ros2_control), since arm/gripper verification is the interesting part.
+**pomona_uvc** is the same base with the arm replaced by a fixed UV-C boom — no
+arm, gripper, camera, or controllers — so skip sections 2's arm/gripper/camera
+steps for it; everything else (base, lidar, IMU) is identical.
+
 ## 1. Launch
 
 ```bash
@@ -24,7 +30,7 @@ cd /home/pravin/pomona_nexus
 colcon build --symlink-install
 source install/setup.bash
 
-ros2 launch pomona_gazebo empty_world_xacro.launch.py
+ros2 launch pomona_gazebo empty_world_pomona_original_xacro.launch.py
 ```
 
 Launch timeline (delays are intentional, to avoid startup races):
@@ -82,7 +88,7 @@ export ROS_DOMAIN_ID=91
 export GAZEBO_MASTER_URI=http://localhost:11347
 unset DISPLAY                       # gzclient exits, gzserver runs headless
 export GAZEBO_MODEL_DATABASE_URI="" # avoid the slow online model fetch
-ros2 launch pomona_gazebo empty_world_xacro.launch.py use_teleop:=false
+ros2 launch pomona_gazebo empty_world_pomona_original_xacro.launch.py use_teleop:=false
 ```
 
 Different `GAZEBO_MASTER_URI` + `ROS_DOMAIN_ID` keep test runs from colliding
@@ -100,15 +106,27 @@ never subscribes. Fixed in `gazebo_plugins.xacro`.
 rule: '--param robot_description:=<?xml ...'".**
 `gazebo_ros2_control` re-passes the URDF to the controller_manager as a CLI
 param, and rcl rejects the non-ASCII box-drawing characters in our xacro
-comment headers. `pomona_state_publisher.launch.py` strips XML comments from the
-description before publishing — keep that strip in place (see the file's header
-note). This only affects the sim path; the real robot has no `gazebo_ros2_control`.
+comment headers. `pomona_state_publisher_{original,uvc}.launch.py` strip XML
+comments from the description before publishing — keep that strip in place (see
+the file's header note). This only affects the sim path; the real robot has no
+`gazebo_ros2_control`.
 
 **Arm holds a drooped pose instead of the intended home.**
 Controllers activate ~8 s after spawn; gravity pulls the arm down in that gap
 and the trajectory controller then holds whatever it finds. The launch sends a
 one-shot go-home trajectory (~t=14 s) to actively raise it. Tune the home pose
 in `ros2_control.xacro` (`initial` args) and the launch's `home_pose` command.
+
+**gzserver segfaults (exit -11) right after spawn — especially on pomona_uvc.**
+The crash backtrace is the rslidar sensor:
+`RaySensor::UpdateImpl → MultiRayShape::Update → ODEMultiRayShape::UpdateRays →
+dSpaceCollide2()` inside `libgazebo_ode`. The CPU `ray` sensor's ODE raycast
+segfaults when gzserver has **no rendering context**. pomona_original dodged it
+only because its D435 camera initializes the render engine; pomona_uvc has no
+camera, so it crashed every launch. Fix: the `rslidar` sensor uses
+`type="gpu_ray"` (not `type="ray"`) in `gazebo_plugins.xacro` for both models —
+it renders the scan instead of ODE-raycasting, avoiding the bug (and it's
+faster). Don't revert to `type="ray"`. (Diagnosed 2026-06-06.)
 
 **LiDAR appears in the wrong place.**
 `rslidar` is mounted on `box_link` (front of the mounting box), not on

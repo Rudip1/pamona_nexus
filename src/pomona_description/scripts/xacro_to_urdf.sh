@@ -13,17 +13,19 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PKG_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-XACRO_ROOT="$PKG_DIR/urdf/xacro/pomona.xacro"
-OUT_DIR="$PKG_DIR/urdf/urdf"
-mkdir -p "$OUT_DIR"
 
-# Pomona "real-robot" URDF (no Gazebo plugins)
-echo "[xacro] pomona.urdf  (use_sim:=false)"
-xacro "$XACRO_ROOT" use_sim:=false  > "$OUT_DIR/pomona.urdf"
-
-# Pomona simulation URDF (with Gazebo plugins)
-echo "[xacro] pomona_sim.urdf  (use_sim:=true)"
-xacro "$XACRO_ROOT" use_sim:=true   > "$OUT_DIR/pomona_sim.urdf"
+# Two robot models, each self-contained under urdf/<model>/{xacro,urdf}:
+#   pomona_original — stock Scout V2 wheels, no UV-C (real-robot-accurate)
+#   pomona_uvc      — sim: oversized wheels + cantilever UV-C boom
+for MODEL in pomona_original pomona_uvc; do
+  XACRO_ROOT="$PKG_DIR/urdf/$MODEL/xacro/pomona.xacro"
+  OUT_DIR="$PKG_DIR/urdf/$MODEL/urdf"
+  mkdir -p "$OUT_DIR"
+  echo "[xacro] $MODEL/urdf/${MODEL}.urdf      (use_sim:=false)"
+  xacro "$XACRO_ROOT" use_sim:=false > "$OUT_DIR/${MODEL}.urdf"
+  echo "[xacro] $MODEL/urdf/${MODEL}_sim.urdf  (use_sim:=true)"
+  xacro "$XACRO_ROOT" use_sim:=true  > "$OUT_DIR/${MODEL}_sim.urdf"
+done
 
 echo "Generated:"
-ls -la "$OUT_DIR"
+ls -la "$PKG_DIR"/urdf/pomona_*/urdf/

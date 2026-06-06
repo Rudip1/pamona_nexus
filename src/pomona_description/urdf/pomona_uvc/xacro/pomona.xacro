@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
+  Licensed under the Apache License, Version 2.0.
+
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║                     POMONA — Root URDF                              ║
+  ║                                                                      ║
+  ║  AgileX Scout V2 + UFactory xArm6 + DH Robotics AG95 + sensors      ║
+  ║                                                                      ║
+  ║  Pass use_sim:=true at xacro-time to include Gazebo plugins         ║
+  ║  (diff_drive, camera, lidar, imu). Real robot launches use the      ║
+  ║  default (use_sim:=false) and the description carries no plugins.   ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<robot name="pomona" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ── arg: include Gazebo plugins or not ───────────────────────────── -->
+  <xacro:arg name="use_sim" default="false"/>
+  <xacro:property name="use_sim" value="$(arg use_sim)"/>
+
+  <!-- ── shared utilities ─────────────────────────────────────────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_uvc/xacro/common_properties.xacro"/>
+
+  <!-- ── mobile base ──────────────────────────────────────────────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_uvc/xacro/scout_v2.xacro"/>
+
+  <!-- ── mounting box (white cuboid carrying arm + display) ───────────── -->
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_uvc/xacro/mount.xacro"/>
+
+  <!-- ── UV-C cantilever (REPLACES the xArm6 arm + AG95 gripper) ──────────
+       Keeps the arm base mesh as the mount on the box; a rod + cross-arm +
+       two flat panels carry the UV-C lamps. No arm, so no ros2_control. -->
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_uvc/xacro/uvc_cantilever.xacro"/>
+
+  <!-- ── sensors (LiDAR + IMU; no EE camera — the arm it mounted on is gone) -->
+  <xacro:include filename="$(find pomona_description)/urdf/pomona_uvc/xacro/sensors.xacro"/>
+
+  <!-- ── Gazebo plugins (diff-drive + wheel joint states + lidar/imu) ──────
+       No ros2_control (no arm) — the base drives via the diff-drive plugin. -->
+  <xacro:if value="${use_sim}">
+    <xacro:include filename="$(find pomona_description)/urdf/pomona_uvc/xacro/gazebo_plugins.xacro"/>
+  </xacro:if>
+
+</robot>

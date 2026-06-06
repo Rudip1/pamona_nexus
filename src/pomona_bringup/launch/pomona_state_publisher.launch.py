@@ -20,7 +20,7 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     xacro_path = PathJoinSubstitution(
-        [FindPackageShare("pomona_description"), "urdf", "xacro", "pomona.xacro"]
+        [FindPackageShare("pomona_description"), "urdf", "pomona_original", "xacro", "pomona.xacro"]
     )
 
     use_sim_time = LaunchConfiguration("use_sim_time", default="false")
