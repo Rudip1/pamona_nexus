@@ -2,25 +2,19 @@
 # Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
 # Licensed under the Apache License, Version 2.0.
 #
-# 10-row strawberry farm world (plastic-mulch beds + strawberry plants with
-# ripe/unripe/flowering berries) with the pomona_uvc robot spawned in a furrow
-# and driveable via rqt_robot_steering. The UV-C boom treats the adjacent beds
-# as the base drives down the lane.
+# Pinwheel strawberry farm (mulch beds + ~1500 strawberry plants on soil/grass
+# ground, hedge boundary) with pomona_uvc spawned at the field ORIGIN (centre of
+# the pinwheel, on the 2 m cross-aisle), driveable via rqt_robot_steering.
 #
-# The bed + plant + dirt models are reused in place from
-#   goldmines/harvester-sim-master/harvester_gazebo/models   (jsather, BSD)
-# via GAZEBO_MODEL_PATH, so nothing large is copied into the repo.
+# Environment + plant models resolve from pomona_gazebo/models/{environment,
+# strawberry} via GAZEBO_MODEL_PATH (set below).
 #
 # Launch graph (mirrors empty_world_pomona_uvc_xacro.launch.py):
-#   gzserver / gzclient        → Gazebo physics + GUI (farm world)
-#   robot_state_publisher      → pomona_state_publisher_uvc (use_sim:=true)
-#   spawn_entity               → reads /robot_description (delayed 5 s)
-#   rqt_robot_steering         → /cmd_vel teleop
-# (pomona_uvc has no arm → no ros2_control / controller spawners / go-home.)
-#
-# Spawn defaults drop the robot into the first drive furrow (between bed
-# columns 0 and 1, centre x≈1.6 m) just ahead of the beds in the headland,
-# facing +Y down the lane.
+#   gzserver / gzclient        -> Gazebo physics + GUI (farm world)
+#   robot_state_publisher      -> pomona_state_publisher_uvc (use_sim:=true)
+#   spawn_entity               -> reads /robot_description (delayed 5 s), at origin
+#   rqt_robot_steering         -> /cmd_vel teleop
+# (pomona_uvc has no arm -> no ros2_control / controller spawners / go-home.)
 #
 # Run:  ros2 launch pomona_gazebo strawberry_farm.launch.py
 
@@ -49,11 +43,10 @@ def generate_launch_description():
     declare_use_sim_time = DeclareLaunchArgument(
         "use_sim_time", default_value="true", description="Use Gazebo clock"
     )
-    # Furrow between bed columns 0 and 1 is centred at x≈1.6 m; start in the
-    # headland (y=1.0) ahead of the beds, facing +Y down the lane.
-    declare_x_pose = DeclareLaunchArgument("x_pose", default_value="1.6")
-    declare_y_pose = DeclareLaunchArgument("y_pose", default_value="1.0")
-    declare_theta  = DeclareLaunchArgument("theta",  default_value="1.5708")
+    # Spawn at the field ORIGIN (centre of the pinwheel, on the 2 m cross-aisle).
+    declare_x_pose = DeclareLaunchArgument("x_pose", default_value="0.0")
+    declare_y_pose = DeclareLaunchArgument("y_pose", default_value="0.0")
+    declare_theta  = DeclareLaunchArgument("theta",  default_value="0.0")
     declare_use_teleop = DeclareLaunchArgument(
         "use_teleop", default_value="true",
         description="Start rqt_robot_steering for /cmd_vel",
@@ -66,9 +59,7 @@ def generate_launch_description():
 
     world_file = os.path.join(pkg_pomona_gazebo, "worlds", "strawberry", "strawberry_farm.world")
 
-    # reused strawberry assets (bed / plant / dirt_plane) live in goldmines
-    harvester_models = os.path.expanduser(
-        "~/pomona_nexus/goldmines/harvester-sim-master/harvester_gazebo/models")
+    models_dir = os.path.join(pkg_pomona_gazebo, "models")
 
     gazebo_resource_path = SetEnvironmentVariable(
         name="GAZEBO_RESOURCE_PATH",
@@ -77,11 +68,13 @@ def generate_launch_description():
              "/opt/ros/humble/share"]
         ),
     )
+    # crop models sit two levels under models/, so list each group dir explicitly
     gazebo_model_path = SetEnvironmentVariable(
         name="GAZEBO_MODEL_PATH",
         value=os.pathsep.join(
-            [harvester_models,
-             os.path.join(pkg_pomona_gazebo, "models"),
+            [os.path.join(models_dir, "environment"),   # bed, grass/soil ground, hedge
+             os.path.join(models_dir, "strawberry"),    # strawberry_<variant>
+             models_dir,
              os.path.dirname(pkg_pomona_desc), "/usr/share/gazebo-11/models"]
         ),
     )

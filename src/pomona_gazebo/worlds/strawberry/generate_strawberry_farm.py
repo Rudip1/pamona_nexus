@@ -28,7 +28,7 @@ SEED          = 42
 ROW_OFFSETS   = [-0.28, 0.0, 0.28]     # 3 rows across the 1 m bed width
 PLANT_PITCH   = 0.45                    # along bed length (~10% overlap of 0.5 m)
 END_MARGIN    = 0.35                    # keep plants off the bed ends
-PLANT_Z       = 0.50                    # bed top
+PLANT_Z       = 0.40                    # bed top
 YAW_STEP      = math.radians(45)        # per-category facing step
 VARIANTS = [("strawberry_ripe", 0.75), ("strawberry_halfripe", 0.05),
             ("strawberry_unripe", 0.05), ("strawberry_flower", 0.05),
