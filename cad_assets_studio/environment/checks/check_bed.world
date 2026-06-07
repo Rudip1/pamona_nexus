@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- Dev check: one 200 m mulch bed (no plants).
+     export GAZEBO_MODEL_PATH=~/pomona_nexus/src/pomona_gazebo/models/environment:$GAZEBO_MODEL_PATH
+     gazebo ~/pomona_nexus/src/pomona_gazebo/worlds/check_bed.world -->
+<sdf version="1.6">
+  <world name="check_bed">
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+    <include><uri>model://bed</uri><pose>0 0 0 0 0 0</pose></include>
+    <gui>
+      <camera name="user_camera">
+        <pose>-7.0 -6.0 3.5 0 0.40 0.6</pose>
+      </camera>
+    </gui>
+  </world>
+</sdf>
