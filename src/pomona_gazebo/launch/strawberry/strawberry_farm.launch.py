@@ -64,7 +64,7 @@ def generate_launch_description():
     y_pose       = LaunchConfiguration("y_pose")
     theta        = LaunchConfiguration("theta")
 
-    world_file = os.path.join(pkg_pomona_gazebo, "worlds", "strawberry_farm.world")
+    world_file = os.path.join(pkg_pomona_gazebo, "worlds", "strawberry", "strawberry_farm.world")
 
     # reused strawberry assets (bed / plant / dirt_plane) live in goldmines
     harvester_models = os.path.expanduser(

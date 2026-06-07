@@ -3,7 +3,7 @@
 # Licensed under the Apache License, Version 2.0.
 #
 # Placeholder — clones empty_world_pomona_uvc_sdf.launch.py with the world file
-# swapped to worlds/apple_orchard.world. Replace this with a real launch when the
+# swapped to worlds/apple/apple_orchard.world. Replace this with a real launch when the
 # apple_orchard environment is built.
 
 import os
@@ -20,7 +20,7 @@ def generate_launch_description():
         # SetLaunchConfiguration only affects substitutions that read it.
         # The launch we're including hard-codes the world path, so for now
         # this placeholder will boot empty_world; replace with a copy of
-        # the empty_world launch that points at worlds/apple_orchard.world once
+        # the empty_world launch that points at worlds/apple/apple_orchard.world once
         # the environment is ready.
         IncludeLaunchDescription(PythonLaunchDescriptionSource(inner)),
     ])
