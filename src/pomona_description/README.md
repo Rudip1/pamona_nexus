@@ -11,7 +11,7 @@ The description ships **two self-contained models**, each under
 | Model | Folder | Wheels | UV-C | Used by |
 |-------|--------|--------|------|---------|
 | **pomona_original** | `urdf/pomona_original/` | stock Scout V2 (radius 0.165, wheelbase 0.498) | none | `pomona_bringup` (real), `display_pomona_original.launch.py`, MoveIt |
-| **pomona_uvc** | `urdf/pomona_uvc/` | oversized (scale 1.25, wheelbase 0.598, ~0.18 m clearance) | front bar + cantilever boom | `pomona_gazebo` (sim) |
+| **pomona_uvc** | `urdf/pomona_uvc/` | stock (scale 1.0, wheelbase 0.498 m, track 0.583 m) | front bar + cantilever boom | `pomona_gazebo` (sim) |
 
 Each folder is a full copy of the xacro set, so the two evolve independently.
 Regenerate the flat URDFs with `bash scripts/xacro_to_urdf.sh`.

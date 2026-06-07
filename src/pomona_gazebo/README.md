@@ -31,7 +31,7 @@ crop launch must add `models/<crop>` to `GAZEBO_MODEL_PATH`.
 Two parallel ways to spawn Pomona — pick one per session:
 
 There are two robot models — `pomona_original` (stock wheels, full xArm6 +
-AG95 + D435 camera + ros2_control) and `pomona_uvc` (oversized wheels + UV-C
+AG95 + D435 camera + ros2_control) and `pomona_uvc` (stock wheels + UV-C
 boom, no arm/gripper/camera/ros2_control). Each has both an xacro and an sdf
 launch: `empty_world_pomona_<model>_{xacro,sdf}.launch.py`.
 
