@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!-- Planting hole: a small dark soil-coloured disc set in the mulch at each
+     plant's base (primitive cylinder, inline colour -> cheap, no mesh). -->
+<sdf version="1.6">
+  <model name="mulch_hole">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry><cylinder><radius>0.07</radius><length>0.012</length></cylinder></geometry>
+        <material>
+          <ambient>0.10 0.07 0.05 1</ambient>
+          <diffuse>0.17 0.12 0.08 1</diffuse>
+          <specular>0 0 0 1</specular>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

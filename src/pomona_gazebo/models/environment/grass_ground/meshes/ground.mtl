@@ -1,0 +1,4 @@
+newmtl grass
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../textures/grass.jpg

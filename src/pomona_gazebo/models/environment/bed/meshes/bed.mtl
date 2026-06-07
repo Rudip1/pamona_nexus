@@ -1,0 +1,10 @@
+newmtl mulch
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../textures/mulch_plastic.jpg
+
+newmtl soil
+Ka 1 1 1
+Kd 1 1 1
+map_Kd ../textures/soil.jpg
+
