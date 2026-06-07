@@ -8,7 +8,7 @@ from mathutils import Vector
 argv = sys.argv[sys.argv.index("--") + 1:]
 outdir = argv[0]
 L  = float(argv[1]) if len(argv) > 1 else 200.0
-Wb, Wt, H, CROWN = 1.0, 0.85, 0.5, 0.04
+Wb, Wt, H, CROWN = 1.0, 0.85, 0.4, 0.04
 TEX = os.path.expanduser("~/pomona_nexus/cad_assets_studio/environment/textures")
 
 # cross-section profile (Y,Z), CCW: bottom edge, right slope, crowned top arc, left slope
