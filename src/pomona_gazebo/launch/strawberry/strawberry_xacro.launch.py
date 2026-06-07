@@ -2,25 +2,24 @@
 # Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
 # Licensed under the Apache License, Version 2.0.
 #
-# Placeholder — clones empty_world_pomona_uvc_xacro.launch.py with the world file
-# swapped to worlds/strawberry.world. Replace this with a real launch when the
-# strawberry environment is built.
+# Convention-named entry point for the strawberry world (xacro pipeline).
+# The real launch is strawberry_farm.launch.py (10-row farm + pomona_uvc spawn
+# + teleop); this just delegates to it so `..._xacro.launch.py` matches the
+# per-world×model naming used elsewhere.
+#
+# Run:  ros2 launch pomona_gazebo strawberry_xacro.launch.py
+#   (equivalent to: ros2 launch pomona_gazebo strawberry_farm.launch.py)
 
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, SetLaunchConfiguration
+from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
     pkg = get_package_share_directory("pomona_gazebo")
-    inner = os.path.join(pkg, "launch", "empty_world", "empty_world_pomona_uvc_xacro.launch.py")
+    farm = os.path.join(pkg, "launch", "strawberry", "strawberry_farm.launch.py")
     return LaunchDescription([
-        # SetLaunchConfiguration only affects substitutions that read it.
-        # The launch we're including hard-codes the world path, so for now
-        # this placeholder will boot empty_world; replace with a copy of
-        # the empty_world launch that points at worlds/strawberry.world once
-        # the environment is ready.
-        IncludeLaunchDescription(PythonLaunchDescriptionSource(inner)),
+        IncludeLaunchDescription(PythonLaunchDescriptionSource(farm)),
     ])
