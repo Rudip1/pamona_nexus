@@ -1,5 +1,5 @@
 <sdf version='1.7'>
-  <model name='pomona_original'>
+  <model name='pomona'>
     <link name='base_link'>
       <inertial>
         <pose>0.013233 -0.000283 0.038275 0 -0 0</pose>
@@ -169,7 +169,7 @@
           </scan>
           <range>
             <min>0.2</min>
-            <max>30</max>
+            <max>5</max>
             <resolution>0.01</resolution>
           </range>
         </ray>
