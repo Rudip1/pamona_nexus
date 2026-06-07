@@ -1,0 +1,71 @@
+# cad_assets_studio
+
+The **asset workshop** for Pomona's Gazebo simulation. This is where 3D assets
+are authored, processed, and previewed *before* they become Gazebo models.
+
+> Two layers — keep them separate:
+> - **Studio (here)** = source `.blend`, processing scripts, intermediate
+>   `.obj/.dae/.stl`, textures, render previews, throwaway check worlds.
+> - **Product** = `src/pomona_gazebo/models/<name>/` — the clean, self-contained
+>   `model.config` + `model.sdf` + `meshes/` that Gazebo actually loads.
+>
+> Gazebo only ever loads the *product*. The studio is the factory.
+
+## Layout
+
+```
+cad_assets_studio/
+├── tools/                 shared/generic scripts (used by every crop)
+│   ├── render_preview.py      OBJ -> preview PNG (CPU Cycles)
+│   ├── blend_export.py        .blend -> dae/stl
+│   ├── blend_inspect.py       list objects/materials/images in a .blend
+│   └── obj_to_blend.py        build a CLEAN .blend from OBJ (no code lineage)
+├── <crop>/                strawberry, maize, tomato, apple, grape, mushroom
+│   ├── source/                editable .blend (textures packed) + reference imgs
+│   ├── meshes/                processed geometry .obj/.dae/.stl
+│   ├── variants/              per-state skins (ripe/unripe/mildew/…) .obj+.mtl
+│   ├── textures/              master texture set (all maps)
+│   ├── previews/              render PNGs
+│   ├── checks/                throwaway .world files for eyeballing in Gazebo
+│   └── tools/                 crop-specific scripts
+└── uvc_cantilever/        the UV-C boom (parametric CAD, not a mesh asset)
+    ├── meshes/                uvc_*.stl
+    └── tools/                 build_uvc_*.py  <- the real "source" (edit these)
+```
+
+## Conventions
+
+- **File naming:** `<crop>_<state>_<NN>` → e.g. `strawberry_mildew_03.obj`.
+- **Editable source = `.blend`** for mesh/art assets (plants); **= the Python
+  build script** for parametric CAD (the UV-C cantilever — STL is just output).
+- **Studio MTLs** reference `../textures/...`. When a mesh is promoted to a
+  Gazebo model, **copy** the needed textures next to the mesh and use
+  `textures/...` so the model is self-contained and survives `colcon` install.
+
+## Making a clean .blend (important)
+
+Never reopen an untrusted downloaded `.blend` as a "source." Build a fresh one
+from the safe OBJ instead (OBJ carries geometry only, no executable code):
+
+```bash
+blender --background --python tools/obj_to_blend.py -- \
+  strawberry/meshes strawberry/source/strawberry_plants.blend "strawberry_plant_0*.obj"
+```
+
+## Provenance / attribution
+
+- **strawberry** plants: extracted from a BlenderKit "Strawberry Garden Planter"
+  model (pot + soil removed), re-textured into ripe/half-ripe/unripe/flowering
+  and two diseases (powdery mildew, leaf scorch).
+- **maize / weeds / stones / markers:** `goldmines/virtual_maize_field-ros2-gz`.
+- **bed / dirt_plane / berry meshes:** `goldmines/harvester-sim-master` (BSD).
+- **tomato / ground:** `goldmines/fields-ignition-noetic`.
+
+## ⚠️ Security note
+
+The original `Strawberry_Garden_Planter.blend` (and its `uploads_` copy)
+contained an **auto-running malicious script** that beaconed to throwaway
+Cloudflare-worker domains on open. Those `.blend` files were **deleted**. All
+meshes here were extracted with `--disable-autoexec` and exist only as
+code-free `.obj/.dae/.stl` + a clean re-built `.blend`. **Do not re-import any
+copy of that planter `.blend`.**

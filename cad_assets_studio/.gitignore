@@ -1,0 +1,6 @@
+# cad_assets_studio — ignore regenerable / transient junk only.
+__pycache__/
+*.pyc
+*.blend1
+*.glb
+.DS_Store
