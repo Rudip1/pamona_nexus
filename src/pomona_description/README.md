@@ -34,7 +34,7 @@ Regenerate the flat URDFs with `bash scripts/xacro_to_urdf.sh`.
 > The two models share most of the set. **pomona_original** carries the arm
 > (`xarm6.xacro`), gripper (`ag95_gripper.xacro`), D435 camera, and
 > `ros2_control.xacro`. **pomona_uvc** drops all of those and adds
-> `uvc_cantilever.xacro` instead — so it has no controllers and no camera.
+> `uvc_cantilever.xacro` instead — so it has no controllers; the boom adds 2 downward D455 cameras over the beds.
 
 `mount.xacro` adds the white box (`box_link`) that physically carries the arm,
 LiDAR, and display — ported from the goldmines `scout_xarm_base` package.
@@ -49,7 +49,7 @@ arm is driven by vendor `xarm_ros2`.
 ### Standalone viewer (no Gazebo, no real robot)
 ```bash
 ros2 launch pomona_description display_pomona_original.launch.py   # stock, no UV-C
-ros2 launch pomona_description display_pomona_uvc.launch.py        # scaled + UV-C boom
+ros2 launch pomona_description display_pomona_uvc.launch.py        # stock wheels + UV-C boom
 ```
 
 ### From another package (xacro at launch time)

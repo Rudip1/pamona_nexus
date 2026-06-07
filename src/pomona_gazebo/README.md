@@ -32,7 +32,7 @@ Two parallel ways to spawn Pomona — pick one per session:
 
 There are two robot models — `pomona_original` (stock wheels, full xArm6 +
 AG95 + D435 camera + ros2_control) and `pomona_uvc` (stock wheels + UV-C
-boom, no arm/gripper/camera/ros2_control). Each has both an xacro and an sdf
+boom + 2 D455 cams, no arm/gripper/ros2_control). Each has both an xacro and an sdf
 launch: `empty_world_pomona_<model>_{xacro,sdf}.launch.py`.
 
 ### Xacro pipeline (recommended)
@@ -65,25 +65,26 @@ ros2 launch pomona_gazebo empty_world_pomona_uvc_xacro.launch.py
 
 ## Topics in sim
 
-Base/lidar/IMU topics are present for **both** models. The camera and
-`joint_states`-from-ros2_control rows are **pomona_original only** (pomona_uvc
-has no arm/gripper/camera, so no ros2_control and no camera topics).
+Base/lidar/IMU topics are present for **both** models. The **D435** camera and
+`joint_states`-from-ros2_control rows are **pomona_original only**. **pomona_uvc**
+has no arm/gripper/ros2_control, but its UV-C boom carries **two D455 cameras**
+(`/uvc_cam_left/*`, `/uvc_cam_right/*`) looking down at the beds.
 
 | Topic | Type | Publisher | Models |
 |---|---|---|---|
 | `/cmd_vel` | `geometry_msgs/Twist` | `rqt_robot_steering` → diff_drive plugin | both |
 | `/odom` | `nav_msgs/Odometry` | diff_drive plugin | both |
-| `/scan` | `sensor_msgs/LaserScan` | rslidar `gpu_ray` sensor (`libgazebo_ros_ray_sensor.so`) | both |
+| `/scan` | `sensor_msgs/LaserScan` | rslidar `gpu_ray` sensor (`libgazebo_ros_ray_sensor.so`), 5 m max | both |
 | `/imu/data` | `sensor_msgs/Imu` | imu plugin | both |
 | `/tf`, `/tf_static` | TF | robot_state_publisher + diff_drive plugin | both |
-| `/camera/color/image_raw` | `sensor_msgs/Image` | D435 RGB camera plugin | original |
-| `/camera/depth/image_rect_raw` | `sensor_msgs/Image` | D435 depth camera plugin | original |
-| `/camera/depth/points` | `sensor_msgs/PointCloud2` | D435 depth camera plugin | original |
+| `/camera/color/image_raw`, `/camera/depth/{image_rect_raw,points}` | `Image`/`PointCloud2` | D435 camera plugin | original |
 | `/joint_states` | `sensor_msgs/JointState` | `joint_state_broadcaster` (ros2_control) | original |
+| `/uvc_cam_left/{color,depth}/*`, `/uvc_cam_right/{color,depth}/*` | `Image`/`PointCloud2` | 2× D455 boom cameras (looking down) | **uvc** |
 
 > The lidar uses `type="gpu_ray"` (not CPU `ray`): the CPU ray path segfaults
-> gzserver when there's no rendering context — which is exactly pomona_uvc's
-> case (no camera). See `docs/sim_runbook.md` and CLAUDE.md "Gotchas".
+> gzserver when there's no rendering context. This first bit pomona_uvc (it had
+> no camera then); it now has D455 cameras that init the render engine, but
+> `gpu_ray` stays — it's the robust, faster choice. See `docs/sim_runbook.md`.
 
 ## Arm + gripper control (gazebo_ros2_control) — pomona_original only
 
