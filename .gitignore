@@ -21,11 +21,10 @@ __pycache__/
 *.db3
 *.mcap
 
-# ── goldmines: keep folder, ignore the huge tarball ──────────────────────────
-# The 2.4 GB tar of the original ROS1 workspace is too big for git.
-# Extract it locally when you need to reference it; do not commit.
-goldmines/scout_workspaces_20260522.tar.gz
-goldmines/.extracted/
+# ── goldmines: reference-only, NOT version controlled ────────────────────────
+# Read-only ROS1 source + robot dumps + downloaded sim assets (~4 GB).
+# Keep locally for reference; never commit the whole folder.
+goldmines/
 
 # ── OS junk ───────────────────────────────────────────────────────────────────
 .DS_Store

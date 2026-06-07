@@ -1,1 +1,0 @@
-can_dev                32768  1 gs_usb

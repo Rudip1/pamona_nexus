@@ -1,3 +1,0 @@
-[user]
-	email = jomanaashraf8@gmail.com
-	name = JomanaAshraf
