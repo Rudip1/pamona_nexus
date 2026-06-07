@@ -6,17 +6,25 @@ launches live in `pomona_bringup`. URDF and meshes come from
 
 ## Worlds
 
-| World            | Status        | Launch                                              |
-|------------------|---------------|-----------------------------------------------------|
-| `empty_world`    | ★ working     | `empty_world_pomona_uvc_xacro.launch.py` / `empty_world_pomona_uvc_sdf.launch.py` |
-| `strawberry`     | placeholder   | `strawberry_xacro.launch.py` / `strawberry_sdf.launch.py` |
-| `grapevine`      | placeholder   | `grapevine_xacro.launch.py` / `grapevine_sdf.launch.py`   |
-| `apple_orchard`  | placeholder   | `apple_orchard_xacro.launch.py` / `apple_orchard_sdf.launch.py` |
-| `mushroom_greenhouse` | placeholder | `mushroom_greenhouse_xacro.launch.py` / `mushroom_greenhouse_sdf.launch.py` |
+Naming: one **crop key** (`strawberry maize tomato apple grape mushroom`) used
+identically across `models/<crop>/`, `launch/<crop>/`, and
+`cad_assets_studio/<crop>/`. The **scene** appears only in the world filename,
+`worlds/<crop>_<scene>.world`.
 
-The four greenhouse worlds boot a baseline (ground + sun) so the launch
-graph can be exercised early. Drop your environment SDFs into
-`models/<env>/` and update `worlds/<env>.world` to instantiate them.
+| World | Status | Launch (under `launch/<crop>/`) |
+|---|---|---|
+| `empty_world.world` | ★ working | `empty_world_pomona_{original,uvc}_{xacro,sdf}.launch.py` |
+| `strawberry_farm.world` | in progress | `strawberry/strawberry_{xacro,sdf}.launch.py` → `strawberry_farm.launch.py` |
+| `apple_orchard.world` | placeholder | `apple/apple_{xacro,sdf}.launch.py` |
+| `grape_vineyard.world` | placeholder | `grape/grape_{xacro,sdf}.launch.py` |
+| `mushroom_greenhouse.world` | placeholder | `mushroom/mushroom_{xacro,sdf}.launch.py` |
+| `maize_field.world` | empty | — |
+| `tomato_greenhouse.world` | empty | — |
+
+Crop plant/prop models live in `models/<crop>/<crop>_<variant>/` (built from
+`cad_assets_studio/<crop>/` via the **crop-asset-pipeline** skill); shared props
+in `models/environment/`. Because crop models sit two levels under `models/`, the
+crop launch must add `models/<crop>` to `GAZEBO_MODEL_PATH`.
 
 ## Pipelines
 

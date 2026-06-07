@@ -2,7 +2,7 @@
 
 ROS 2 Humble workspace for **Pomona** — an AgileX Scout V2 mobile base with a
 UFactory xArm6 arm and DH Robotics AG95 gripper, intended for greenhouse fruit
-picking (strawberry / grapevine / apple / mushroom).
+picking (strawberry / grape / apple / mushroom).
 
 Targets **Ubuntu 22.04 + ROS 2 Humble + Gazebo Classic 11**. The same workspace
 runs on the dev machine (simulation) and on the real robot (hardware drivers).
