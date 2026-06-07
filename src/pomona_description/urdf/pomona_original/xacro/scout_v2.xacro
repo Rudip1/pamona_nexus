@@ -82,7 +82,7 @@
 
   <!-- 4 wheels, counter-clockwise from front-right.
        Motors 1 & 2 (left side) are mechanically reversed. -->
-  <xacro:scout_wheel_type1 wheel_prefix="front_right">
+  <xacro:scout_wheel_type1 wheel_prefix="front_right" wheel_axis="0 -1 0">
     <origin xyz="${ wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="3.14 0 0"/>
   </xacro:scout_wheel_type1>
   <xacro:scout_wheel_type2 wheel_prefix="front_left">
@@ -91,7 +91,7 @@
   <xacro:scout_wheel_type1 wheel_prefix="rear_left">
     <origin xyz="${-wheelbase/2} ${ track/2} ${wheel_vertical_offset}" rpy="0 0 0"/>
   </xacro:scout_wheel_type1>
-  <xacro:scout_wheel_type2 wheel_prefix="rear_right">
+  <xacro:scout_wheel_type2 wheel_prefix="rear_right" wheel_axis="0 -1 0">
     <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="3.14 0 0"/>
   </xacro:scout_wheel_type2>
 

@@ -147,7 +147,7 @@
     <parent link="base_link"/>
     <child link="front_left_wheel_link"/>
     <origin rpy="0 0 0" xyz="0.249 0.29153 -0.0702"/>
-    <axis rpy="0 0 0" xyz="0 -1 0"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
   </joint>
   <gazebo reference="front_left_wheel_link">
     <mu1>1.0</mu1>
@@ -182,7 +182,7 @@
     <parent link="base_link"/>
     <child link="rear_left_wheel_link"/>
     <origin rpy="0 0 0" xyz="-0.249 0.29153 -0.0702"/>
-    <axis rpy="0 0 0" xyz="0 -1 0"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
   </joint>
   <!-- Friction for skid-steer -->
   <gazebo reference="rear_left_wheel_link">

@@ -33,7 +33,14 @@
       <right_joint>front_right_wheel</right_joint>
       <right_joint>rear_right_wheel</right_joint>
 
+      <!-- ONE value per wheel pair (num_wheel_pairs=2). If only listed once,
+           pair 2 (rear wheels) silently falls back to the plugin default
+           (0.34 m / 0.2 m), so the rear axle turns with a different differential
+           than the front and the same-side wheels fight each other. Both pairs
+           share the Scout's track + wheel size, so repeat the same values. -->
       <wheel_separation>0.58306</wheel_separation>
+      <wheel_separation>0.58306</wheel_separation>
+      <wheel_diameter>${2 * wheel_radius}</wheel_diameter>
       <wheel_diameter>${2 * wheel_radius}</wheel_diameter>
 
       <max_wheel_torque>50.0</max_wheel_torque>

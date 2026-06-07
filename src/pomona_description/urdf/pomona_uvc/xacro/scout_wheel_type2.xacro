@@ -9,7 +9,12 @@
 -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="scout_wheel">
 
-  <xacro:macro name="scout_wheel_type2" params="wheel_prefix *joint_pose">
+  <!-- wheel_axis: spin axis in the JOINT frame. Default ("0 1 0") suits the
+       unrolled left wheels. The right wheels carry a 180° roll (rpy="3.14 0 0")
+       that negates Y, so they must pass the NEGATED axis ("0 -1 0") to end up
+       with the SAME effective axis. If left/right effective axes differ the
+       diff-drive swaps linear<->angular; flipping all of them inverts fwd/back. -->
+  <xacro:macro name="scout_wheel_type2" params="wheel_prefix wheel_axis:='0 1 0' *joint_pose">
     <link name="${wheel_prefix}_wheel_link">
       <inertial>
         <mass value="3"/>
@@ -36,7 +41,7 @@
       <parent link="base_link"/>
       <child  link="${wheel_prefix}_wheel_link"/>
       <xacro:insert_block name="joint_pose"/>
-      <axis xyz="0 -1 0" rpy="0 0 0"/>
+      <axis xyz="${wheel_axis}" rpy="0 0 0"/>
     </joint>
 
     <gazebo reference="${wheel_prefix}_wheel_link">
