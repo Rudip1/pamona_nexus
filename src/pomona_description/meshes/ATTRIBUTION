@@ -27,3 +27,4 @@ mount/box_link.stl, mount/display_link.stl, mount/laser_link.stl
           (.../scout_xarm/scout_xarm_base/meshes/{base_link,display_Link,laser_Link}.STL)
   License: see upstream package (custom AgileX/SolidWorks export)
   Renamed: base_link.STL -> box_link.stl (avoids clash with base/base_link.dae).
+camera_d455.stl — Intel RealSense D455 mesh, from cogni-nav-x0/vf_robot_description (mm; use scale 0.001)

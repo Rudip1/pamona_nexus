@@ -1,15 +1,15 @@
 <sdf version='1.7'>
-  <model name='pomona_uvc'>
+  <model name='pomona'>
     <link name='base_link'>
       <inertial>
-        <pose>0.029532 -0.000257 0.080011 0 -0 0</pose>
+        <pose>0.029532 -0.000257 0.107177 0 -0 0</pose>
         <mass>50.6881</mass>
         <inertia>
-          <ixx>4.63225</ixx>
+          <ixx>6.15875</ixx>
           <ixy>-0.00039649</ixy>
-          <ixz>-0.498755</ixz>
-          <iyy>7.19448</iyy>
-          <iyz>0.00223966</iyz>
+          <ixz>-0.723994</ixz>
+          <iyy>8.72098</iyy>
+          <iyz>0.00188531</iyz>
           <izz>5.02953</izz>
         </inertia>
       </inertial>
@@ -89,52 +89,101 @@
           </mesh>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_rod_collision_collision_7'>
-        <pose>0.212 0 0.39 0 -0 0</pose>
+      <collision name='base_link_fixed_joint_lump__uvc_cam_left_link_collision_7'>
+        <pose>0.53 1 0.74 0 1.5708 0</pose>
+        <geometry>
+          <box>
+            <size>0.124 0.029 0.026</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='base_link_fixed_joint_lump__uvc_cam_right_link_collision_8'>
+        <pose>0.53 -1 0.74 0 1.5708 0</pose>
+        <geometry>
+          <box>
+            <size>0.124 0.029 0.026</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='base_link_fixed_joint_lump__uvc_rod_collision_collision_9'>
+        <pose>0.212 0 0.54 0 -0 0</pose>
         <geometry>
           <cylinder>
-            <length>0.22</length>
+            <length>0.52</length>
             <radius>0.025</radius>
           </cylinder>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_cross_arm_collision_collision_8'>
-        <pose>0.212 0 0.5 0 -0 0</pose>
+      <collision name='base_link_fixed_joint_lump__uvc_cross_tube_collision_collision_10'>
+        <pose>0.212 0 0.8 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>1</length>
+            <radius>0.025</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_link_fixed_joint_lump__left_panel_collision_collision_11'>
+        <pose>0.065 1 0.8 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.035 1.5 0.035</size>
+            <size>0.73 1 0.012</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__left_panel_collision_collision_9'>
-        <pose>0.065 0.75 0.5 0 -0 0</pose>
+      <collision name='base_link_fixed_joint_lump__right_panel_collision_collision_12'>
+        <pose>0.065 -1 0.8 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.73 0.7 0.012</size>
+            <size>0.73 1 0.012</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__right_panel_collision_collision_10'>
-        <pose>0.065 -0.75 0.5 0 -0 0</pose>
+      <collision name='base_link_fixed_joint_lump__uvc_weld_1_collision_collision_13'>
+        <pose>0.212 0.5 0.8 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.73 0.7 0.012</size>
+            <size>0.09 0.07 0.062</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_lamp_left_collision_collision_11'>
-        <pose>0.065 0.75 0.486 0 -0 0</pose>
+      <collision name='base_link_fixed_joint_lump__uvc_weld_-1_collision_collision_14'>
+        <pose>0.212 -0.5 0.8 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.73 0.556 0.016</size>
+            <size>0.09 0.07 0.062</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_lamp_right_collision_collision_12'>
-        <pose>0.065 -0.75 0.486 0 -0 0</pose>
+      <collision name='base_link_fixed_joint_lump__uvc_lamp_left_collision_collision_15'>
+        <pose>0.065 1 0.781 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.73 0.556 0.016</size>
+            <size>0.73 0.9 0.018</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='base_link_fixed_joint_lump__uvc_lamp_right_collision_collision_16'>
+        <pose>0.065 -1 0.781 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.73 0.9 0.018</size>
           </box>
         </geometry>
       </collision>
@@ -191,111 +240,246 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_rod_visual_6'>
-        <pose>0.212 0 0.39 0 -0 0</pose>
+      <visual name='base_link_fixed_joint_lump__uvc_cam_left_link_visual_6'>
+        <pose>0.53 1 0.74 -3.14159 -4e-06 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://pomona_description/meshes/sensors/d455.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_link_fixed_joint_lump__uvc_cam_right_link_visual_7'>
+        <pose>0.53 -1 0.74 -3.14159 -4e-06 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://pomona_description/meshes/sensors/d455.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_link_fixed_joint_lump__uvc_rod_visual_8'>
+        <pose>0.212 0 0.54 0 -0 0</pose>
         <geometry>
           <cylinder>
-            <length>0.22</length>
+            <length>0.52</length>
             <radius>0.025</radius>
           </cylinder>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_cross_arm_visual_7'>
-        <pose>0.212 0 0.5 0 -0 0</pose>
+      <visual name='base_link_fixed_joint_lump__uvc_cross_tube_visual_9'>
+        <pose>0.212 0 0.8 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>1</length>
+            <radius>0.025</radius>
+          </cylinder>
+        </geometry>
+      </visual>
+      <visual name='base_link_fixed_joint_lump__left_panel_visual_10'>
+        <pose>0.065 1 0.8 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.035 1.5 0.035</size>
+            <size>0.73 1 0.012</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__left_panel_visual_8'>
-        <pose>0.065 0.75 0.5 0 -0 0</pose>
+      <visual name='base_link_fixed_joint_lump__left_flap_in_visual_11'>
+        <pose>0.065 0.5 0.71 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.73 0.7 0.012</size>
+            <size>0.73 0.006 0.18</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__right_panel_visual_9'>
-        <pose>0.065 -0.75 0.5 0 -0 0</pose>
+      <visual name='base_link_fixed_joint_lump__left_flap_out_visual_12'>
+        <pose>0.065 1.5 0.71 0 -0 0</pose>
         <geometry>
           <box>
-            <size>0.73 0.7 0.012</size>
+            <size>0.73 0.006 0.18</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_1_visual_10'>
-        <pose>0.065 0.48 0.486 0 1.5708 0</pose>
+      <visual name='base_link_fixed_joint_lump__right_panel_visual_13'>
+        <pose>0.065 -1 0.8 0 -0 0</pose>
         <geometry>
-          <cylinder>
-            <length>0.73</length>
-            <radius>0.008</radius>
-          </cylinder>
+          <box>
+            <size>0.73 1 0.012</size>
+          </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_2_visual_11'>
-        <pose>0.065 0.66 0.486 0 1.5708 0</pose>
+      <visual name='base_link_fixed_joint_lump__right_flap_in_visual_14'>
+        <pose>0.065 -0.5 0.71 0 -0 0</pose>
         <geometry>
-          <cylinder>
-            <length>0.73</length>
-            <radius>0.008</radius>
-          </cylinder>
+          <box>
+            <size>0.73 0.006 0.18</size>
+          </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_3_visual_12'>
-        <pose>0.065 0.84 0.486 0 1.5708 0</pose>
+      <visual name='base_link_fixed_joint_lump__right_flap_out_visual_15'>
+        <pose>0.065 -1.5 0.71 0 -0 0</pose>
         <geometry>
-          <cylinder>
-            <length>0.73</length>
-            <radius>0.008</radius>
-          </cylinder>
+          <box>
+            <size>0.73 0.006 0.18</size>
+          </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_4_visual_13'>
-        <pose>0.065 1.02 0.486 0 1.5708 0</pose>
+      <visual name='base_link_fixed_joint_lump__uvc_weld_1_visual_16'>
+        <pose>0.212 0.5 0.8 0 -0 0</pose>
         <geometry>
-          <cylinder>
-            <length>0.73</length>
-            <radius>0.008</radius>
-          </cylinder>
+          <box>
+            <size>0.09 0.07 0.062</size>
+          </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_1_visual_14'>
-        <pose>0.065 -0.48 0.486 0 1.5708 0</pose>
+      <visual name='base_link_fixed_joint_lump__uvc_weld_-1_visual_17'>
+        <pose>0.212 -0.5 0.8 0 -0 0</pose>
         <geometry>
-          <cylinder>
-            <length>0.73</length>
-            <radius>0.008</radius>
-          </cylinder>
+          <box>
+            <size>0.09 0.07 0.062</size>
+          </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_2_visual_15'>
-        <pose>0.065 -0.66 0.486 0 1.5708 0</pose>
+      <visual name='base_link_fixed_joint_lump__cam_arm_1_visual_18'>
+        <pose>0.48 1 0.788 0 -0 0</pose>
         <geometry>
-          <cylinder>
-            <length>0.73</length>
-            <radius>0.008</radius>
-          </cylinder>
+          <box>
+            <size>0.12 0.025 0.02</size>
+          </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_3_visual_16'>
-        <pose>0.065 -0.84 0.486 0 1.5708 0</pose>
+      <visual name='base_link_fixed_joint_lump__cam_drop_1_visual_19'>
+        <pose>0.53 1 0.77 0 -0 0</pose>
         <geometry>
-          <cylinder>
-            <length>0.73</length>
-            <radius>0.008</radius>
-          </cylinder>
+          <box>
+            <size>0.025 0.025 0.06</size>
+          </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_4_visual_17'>
-        <pose>0.065 -1.02 0.486 0 1.5708 0</pose>
+      <visual name='base_link_fixed_joint_lump__cam_arm_-1_visual_20'>
+        <pose>0.48 -1 0.788 0 -0 0</pose>
         <geometry>
-          <cylinder>
-            <length>0.73</length>
-            <radius>0.008</radius>
-          </cylinder>
+          <box>
+            <size>0.12 0.025 0.02</size>
+          </box>
         </geometry>
       </visual>
+      <visual name='base_link_fixed_joint_lump__cam_drop_-1_visual_21'>
+        <pose>0.53 -1 0.77 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.025 0.025 0.06</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_0_visual_22'>
+        <pose>-0.22 1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_1_visual_23'>
+        <pose>-0.106 1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_2_visual_24'>
+        <pose>0.008 1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_3_visual_25'>
+        <pose>0.122 1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_4_visual_26'>
+        <pose>0.236 1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_5_visual_27'>
+        <pose>0.35 1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_0_visual_28'>
+        <pose>-0.22 -1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_1_visual_29'>
+        <pose>-0.106 -1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_2_visual_30'>
+        <pose>0.008 -1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_3_visual_31'>
+        <pose>0.122 -1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_4_visual_32'>
+        <pose>0.236 -1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_5_visual_33'>
+        <pose>0.35 -1 0.781 1.5708 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.9</length>
+            <radius>0.009</radius>
+          </cylinder>
+        </geometry>
+      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
       <sensor name='imu' type='imu'>
         <always_on>1</always_on>
         <update_rate>200</update_rate>
@@ -323,7 +507,7 @@
           </scan>
           <range>
             <min>0.2</min>
-            <max>30</max>
+            <max>5</max>
             <resolution>0.01</resolution>
           </range>
         </ray>
@@ -335,6 +519,114 @@
           <frame_name>rslidar</frame_name>
         </plugin>
         <pose>0.37655 0 0.116 0 -0 0</pose>
+      </sensor>
+      <sensor name='uvc_cam_left_rgb' type='camera'>
+        <always_on>1</always_on>
+        <visualize>0</visualize>
+        <update_rate>15</update_rate>
+        <camera>
+          <horizontal_fov>1.5708</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>6</far>
+          </clip>
+        </camera>
+        <plugin name='uvc_cam_left_rgb_ctrl' filename='libgazebo_ros_camera.so'>
+          <ros>
+            <namespace>/uvc_cam_left</namespace>
+            <remapping>image_raw:=color/image_raw</remapping>
+            <remapping>camera_info:=color/camera_info</remapping>
+          </ros>
+          <frame_name>uvc_cam_left_optical_frame</frame_name>
+        </plugin>
+        <pose>0.53 1 0.74 3.14159 1.57079 3.14159</pose>
+      </sensor>
+      <sensor name='uvc_cam_left_depth' type='depth'>
+        <always_on>1</always_on>
+        <visualize>0</visualize>
+        <update_rate>10</update_rate>
+        <camera>
+          <horizontal_fov>1.518</horizontal_fov>
+          <image>
+            <width>424</width>
+            <height>240</height>
+          </image>
+          <clip>
+            <near>0.2</near>
+            <far>6</far>
+          </clip>
+        </camera>
+        <plugin name='uvc_cam_left_depth_ctrl' filename='libgazebo_ros_camera.so'>
+          <ros>
+            <namespace>/uvc_cam_left</namespace>
+            <remapping>image_raw:=depth/image_rect_raw</remapping>
+            <remapping>camera_info:=depth/camera_info</remapping>
+            <remapping>points:=depth/points</remapping>
+          </ros>
+          <frame_name>uvc_cam_left_optical_frame</frame_name>
+          <point_cloud_cutoff>0.2</point_cloud_cutoff>
+          <point_cloud_cutoff_max>6.0</point_cloud_cutoff_max>
+        </plugin>
+        <pose>0.53 1 0.74 3.14159 1.57079 3.14159</pose>
+      </sensor>
+      <sensor name='uvc_cam_right_rgb' type='camera'>
+        <always_on>1</always_on>
+        <visualize>0</visualize>
+        <update_rate>15</update_rate>
+        <camera>
+          <horizontal_fov>1.5708</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>6</far>
+          </clip>
+        </camera>
+        <plugin name='uvc_cam_right_rgb_ctrl' filename='libgazebo_ros_camera.so'>
+          <ros>
+            <namespace>/uvc_cam_right</namespace>
+            <remapping>image_raw:=color/image_raw</remapping>
+            <remapping>camera_info:=color/camera_info</remapping>
+          </ros>
+          <frame_name>uvc_cam_right_optical_frame</frame_name>
+        </plugin>
+        <pose>0.53 -1 0.74 3.14159 1.57079 3.14159</pose>
+      </sensor>
+      <sensor name='uvc_cam_right_depth' type='depth'>
+        <always_on>1</always_on>
+        <visualize>0</visualize>
+        <update_rate>10</update_rate>
+        <camera>
+          <horizontal_fov>1.518</horizontal_fov>
+          <image>
+            <width>424</width>
+            <height>240</height>
+          </image>
+          <clip>
+            <near>0.2</near>
+            <far>6</far>
+          </clip>
+        </camera>
+        <plugin name='uvc_cam_right_depth_ctrl' filename='libgazebo_ros_camera.so'>
+          <ros>
+            <namespace>/uvc_cam_right</namespace>
+            <remapping>image_raw:=depth/image_rect_raw</remapping>
+            <remapping>camera_info:=depth/camera_info</remapping>
+            <remapping>points:=depth/points</remapping>
+          </ros>
+          <frame_name>uvc_cam_right_optical_frame</frame_name>
+          <point_cloud_cutoff>0.2</point_cloud_cutoff>
+          <point_cloud_cutoff_max>6.0</point_cloud_cutoff_max>
+        </plugin>
+        <pose>0.53 -1 0.74 3.14159 1.57079 3.14159</pose>
       </sensor>
     </link>
     <joint name='front_left_wheel' type='revolute'>

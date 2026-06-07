@@ -5,27 +5,37 @@
 
   UV-C cantilever (pomona_uvc only) — replaces the xArm6 arm.
 
-  Shape (top view):
+  T-frame (front view):
 
-      [====panel_L====]            [====panel_R====]
-              \                            /
-               +============o============+
-                            ^ base/rod on the box
+       panel_L                 mast                 panel_R
+      [=======]                 |                  [=======]
+       | | | |  <- lamps        |          lamps -> | | | |
+              \                 |                  /
+               +=== cross-tube ===o=== cross-tube ===+   (T-weld at mast top)
+                                  |
+                                (base/rod on the box)
 
-  center 'o' = base/rod on the box; a cross-arm reaches out to each side; at
-  each end a FLAT, THIN horizontal panel spans a full strawberry bed and holds
-  4 fore-aft UV-C lamp tubes pointing down.
+  A vertical CIRCULAR mast carries one horizontal CIRCULAR cross-tube (same dia),
+  T-welded at the top. The cross-tube reaches out to the INNER EDGE of each flat
+  panel (weld gusset there); each 1 m-wide panel cantilevers outward over a full
+  strawberry bed. Beds are 2 m centre-to-centre; the robot drives the 1 m furrow
+  between them.
 
-  Bed coverage (per side, from robot centreline):
-    near edge ~0.40 m (= outer wheel edge) ... far edge ~1.10 m  -> 0.70 m bed,
-    panel centred at 0.75 m. Robot drives the furrow between two beds.
+  Each panel = a shallow housing: flat roof plate + two side shield FLAPS hanging
+  down on both long edges (skirt_depth) so the UV-C only projects onto the bed.
+  Lamps = n_tubes thin blue glass cylinders running ACROSS the bed (row-wise),
+  spread along the driving direction, recessed under the roof.
 
-  Two links: uvc_cantilever_link (rod + arm + panels, grey) and uvc_lamps_link
-  (tubes only, so Gazebo colours just the lamps blue — see gazebo_plugins.xacro).
+  A RealSense D455 (official mesh, meshes/sensors/d455.stl) hangs on a small
+  L-bracket FORWARD of and below each panel front edge, lens looking straight
+  down at its bed -> /uvc_cam_{left,right}/{color,depth}/* (gazebo_plugins.xacro).
 
-  Primitives only (no CAD). base_link frame; with stock wheels the ground is at
-  base_link z = -0.235, so arm_z = 0.50 -> panels ~0.735 m AGL, base mount
-  (z=0.26) is ~0.495 m AGL.
+  Links: uvc_cantilever_link (mast + cross-tube + gussets + panels + flaps +
+  brackets, grey), uvc_lamps_link (tubes only -> coloured blue in Gazebo), and
+  uvc_cam_{left,right}_link (D455). Primitives + the D455 mesh; base_link frame.
+  Stock wheels -> ground at base_link z = -0.235, so arm_z = 0.80 -> panels
+  ~1.08 m AGL. All sizes are the tunables below; after editing, regenerate with
+  scripts/xacro_to_urdf.sh (+ gz sdf for models/pomona_uvc/model.sdf).
 -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
@@ -52,24 +62,40 @@
   </joint>
 
   <!-- ── tunables (base_link frame) ────────────────────────────────────── -->
-  <xacro:property name="panel_y_c"   value="0.75"/>    <!-- panel centre (bed centre) from centreline -->
-  <xacro:property name="panel_width" value="0.70"/>    <!-- panel lateral width (Y) = bed width -->
-  <xacro:property name="arm_z"       value="0.50"/>    <!-- panel plane height (~0.78 m AGL) -->
+  <xacro:property name="panel_y_c"   value="1.0"/>    <!-- panel centre (bed centre) from centreline -->
+  <xacro:property name="panel_width" value="1.0"/>    <!-- panel lateral width (Y) = bed width -->
+  <xacro:property name="arm_z"       value="0.80"/>    <!-- panel plane height (~1.08 m AGL (+0.30 m)) -->
   <xacro:property name="panel_len"   value="0.73"/>    <!-- panel fore-aft length (= box length) -->
   <xacro:property name="panel_x_c"   value="0.065"/>   <!-- panel fore-aft centre (= box centre) -->
   <xacro:property name="panel_thick" value="0.012"/>   <!-- panel thickness (Z) — thin flat plate -->
-  <xacro:property name="beam_w"      value="0.035"/>   <!-- cross-arm square section -->
   <xacro:property name="rod_x"       value="0.212"/>   <!-- mast over the arm base -->
   <xacro:property name="rod_z_bot"   value="0.28"/>
-  <xacro:property name="rod_radius"  value="0.025"/>
+  <xacro:property name="rod_radius"  value="0.025"/>   <!-- circular mast + cross-tube radius -->
 
-  <xacro:property name="tube_radius" value="0.008"/>   <!-- thin UV-C tube (~16 mm dia) -->
-  <!-- 4 tubes per side, spread across the bed width (offsets from panel centre) -->
-  <xacro:property name="tube_o1" value="0.27"/>
-  <xacro:property name="tube_o2" value="0.09"/>
-  <xacro:property name="lamp_z" value="${arm_z - panel_thick/2 - tube_radius}"/>
+  <!-- T-frame: a single horizontal CIRCULAR cross-tube (same dia as the mast)
+       welded to the mast top, reaching out to the INNER EDGE of each panel.
+       Panels cantilever outward from that inner-edge weld (not the centre). -->
+  <xacro:property name="panel_inner" value="${panel_y_c - panel_width/2}"/>  <!-- inner long edge (0.5) -->
+  <xacro:property name="panel_front_x" value="${panel_x_c + panel_len/2}"/>  <!-- leading (front) edge in +X -->
 
-  <!-- a flat, thin horizontal panel (grey) on one side -->
+  <!-- D455 camera: on an L-bracket FORWARD of the panel front edge, hanging
+       below it, lens looking straight down at the bed (clear of the lamps) -->
+  <xacro:property name="cam_scale" value="0.001"/>   <!-- D455 STL is in mm -->
+  <xacro:property name="cam_fwd"   value="0.10"/>    <!-- forward of the panel front edge -->
+  <xacro:property name="cam_drop"  value="0.06"/>    <!-- 6 cm drop -->
+
+  <!-- UV-C lamps: thin cylindrical glass tubes running ACROSS the bed (row-wise),
+       several spread along the driving direction, recessed in a shallow housing -->
+  <xacro:property name="tube_radius"  value="0.009"/>  <!-- ~18 mm dia glass tube (realistic) -->
+  <xacro:property name="n_tubes"      value="6"/>      <!-- lamps per panel -->
+  <xacro:property name="tube_len"     value="${panel_width - 0.10}"/>  <!-- across bed, inside the flaps -->
+  <xacro:property name="tube_inset_x" value="0.08"/>   <!-- keep end lamps inside the panel ends -->
+  <xacro:property name="skirt_depth"  value="0.18"/>   <!-- side flap hang-down (shields stray rays) -->
+  <xacro:property name="flap_thick"   value="0.006"/>  <!-- thin shield plate -->
+  <xacro:property name="lamp_z" value="${arm_z - panel_thick/2 - tube_radius - 0.004}"/>
+
+  <!-- housing for one side: flat roof plate + two thin side flaps (skirts) that
+       hang down on both long edges so the UV-C only projects onto the bed -->
   <xacro:macro name="uvc_panel" params="name side">
     <visual name="${name}_panel">
       <origin xyz="${panel_x_c} ${side*panel_y_c} ${arm_z}" rpy="0 0 0"/>
@@ -80,26 +106,39 @@
       <origin xyz="${panel_x_c} ${side*panel_y_c} ${arm_z}" rpy="0 0 0"/>
       <geometry><box size="${panel_len} ${panel_width} ${panel_thick}"/></geometry>
     </collision>
-  </xacro:macro>
-
-  <!-- one fore-aft UV-C tube (blue) at an absolute Y -->
-  <xacro:macro name="uvc_tube" params="name y">
-    <visual name="uvc_lamp_${name}">
-      <origin xyz="${panel_x_c} ${y} ${lamp_z}" rpy="0 1.5708 0"/>
-      <geometry><cylinder radius="${tube_radius}" length="${panel_len}"/></geometry>
-      <material name="blue"/>
+    <!-- inner-edge shield flap -->
+    <visual name="${name}_flap_in">
+      <origin xyz="${panel_x_c} ${side*(panel_y_c - panel_width/2)} ${arm_z - skirt_depth/2}" rpy="0 0 0"/>
+      <geometry><box size="${panel_len} ${flap_thick} ${skirt_depth}"/></geometry>
+      <material name="grey"/>
+    </visual>
+    <!-- outer-edge shield flap -->
+    <visual name="${name}_flap_out">
+      <origin xyz="${panel_x_c} ${side*(panel_y_c + panel_width/2)} ${arm_z - skirt_depth/2}" rpy="0 0 0"/>
+      <geometry><box size="${panel_len} ${flap_thick} ${skirt_depth}"/></geometry>
+      <material name="grey"/>
     </visual>
   </xacro:macro>
 
-  <!-- 4 tubes + one collision box, for one side -->
+  <!-- recursive: place n cross-bed (row-wise) glass tubes spread along +X -->
+  <xacro:macro name="uvc_tube_row" params="name side i n">
+    <xacro:if value="${i &lt; n}">
+      <visual name="uvc_lamp_${name}_${i}">
+        <origin xyz="${panel_x_c - panel_len/2 + tube_inset_x + i*(panel_len - 2*tube_inset_x)/(n-1)} ${side*panel_y_c} ${lamp_z}"
+                rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="${tube_radius}" length="${tube_len}"/></geometry>
+        <material name="blue"/>
+      </visual>
+      <xacro:uvc_tube_row name="${name}" side="${side}" i="${i+1}" n="${n}"/>
+    </xacro:if>
+  </xacro:macro>
+
+  <!-- n row-wise tubes + one collision box, for one side -->
   <xacro:macro name="uvc_lamp_side" params="name side">
-    <xacro:uvc_tube name="${name}_1" y="${side*(panel_y_c - tube_o1)}"/>
-    <xacro:uvc_tube name="${name}_2" y="${side*(panel_y_c - tube_o2)}"/>
-    <xacro:uvc_tube name="${name}_3" y="${side*(panel_y_c + tube_o2)}"/>
-    <xacro:uvc_tube name="${name}_4" y="${side*(panel_y_c + tube_o1)}"/>
+    <xacro:uvc_tube_row name="${name}" side="${side}" i="0" n="${n_tubes}"/>
     <collision name="uvc_lamp_${name}_collision">
       <origin xyz="${panel_x_c} ${side*panel_y_c} ${lamp_z}" rpy="0 0 0"/>
-      <geometry><box size="${panel_len} ${2*tube_o1 + 2*tube_radius} ${2*tube_radius}"/></geometry>
+      <geometry><box size="${panel_len} ${tube_len} ${2*tube_radius}"/></geometry>
     </collision>
   </xacro:macro>
 
@@ -115,19 +154,53 @@
       <geometry><cylinder radius="${rod_radius}" length="${arm_z - rod_z_bot}"/></geometry>
     </collision>
 
-    <!-- cross-arm spanning out to both panel centres -->
-    <visual name="uvc_cross_arm">
-      <origin xyz="${rod_x} 0 ${arm_z}" rpy="0 0 0"/>
-      <geometry><box size="${beam_w} ${2*panel_y_c} ${beam_w}"/></geometry>
+    <!-- horizontal CIRCULAR cross-tube, T-welded to mast top, reaching to each
+         panel's inner edge (cylinder axis along Y -> roll 90 deg) -->
+    <visual name="uvc_cross_tube">
+      <origin xyz="${rod_x} 0 ${arm_z}" rpy="1.5708 0 0"/>
+      <geometry><cylinder radius="${rod_radius}" length="${2*panel_inner}"/></geometry>
       <material name="grey"/>
     </visual>
-    <collision name="uvc_cross_arm_collision">
-      <origin xyz="${rod_x} 0 ${arm_z}" rpy="0 0 0"/>
-      <geometry><box size="${beam_w} ${2*panel_y_c} ${beam_w}"/></geometry>
+    <collision name="uvc_cross_tube_collision">
+      <origin xyz="${rod_x} 0 ${arm_z}" rpy="1.5708 0 0"/>
+      <geometry><cylinder radius="${rod_radius}" length="${2*panel_inner}"/></geometry>
     </collision>
 
     <xacro:uvc_panel name="left"  side="1"/>
     <xacro:uvc_panel name="right" side="-1"/>
+
+    <!-- weld collars/gussets: a tapered block at each tube-to-panel inner-edge
+         joint, bridging the fat round tube to the thin flat panel -->
+    <xacro:macro name="uvc_weld" params="side">
+      <visual name="uvc_weld_${side}">
+        <origin xyz="${rod_x} ${side*panel_inner} ${arm_z}" rpy="0 0 0"/>
+        <geometry><box size="0.09 0.07 ${2*rod_radius + panel_thick}"/></geometry>
+        <material name="grey"/>
+      </visual>
+      <collision name="uvc_weld_${side}_collision">
+        <origin xyz="${rod_x} ${side*panel_inner} ${arm_z}" rpy="0 0 0"/>
+        <geometry><box size="0.09 0.07 ${2*rod_radius + panel_thick}"/></geometry>
+      </collision>
+    </xacro:macro>
+    <xacro:uvc_weld side="1"/>
+    <xacro:uvc_weld side="-1"/>
+
+    <!-- camera L-bracket: a forward arm from the panel front edge, then a drop
+         down to the D455 (so the camera hangs forward & below, lens down) -->
+    <xacro:macro name="uvc_cam_bracket" params="side">
+      <visual name="cam_arm_${side}">
+        <origin xyz="${panel_front_x + cam_fwd/2} ${side*panel_y_c} ${arm_z - 0.012}" rpy="0 0 0"/>
+        <geometry><box size="${cam_fwd + 0.02} 0.025 0.02"/></geometry>
+        <material name="grey"/>
+      </visual>
+      <visual name="cam_drop_${side}">
+        <origin xyz="${panel_front_x + cam_fwd} ${side*panel_y_c} ${arm_z - cam_drop/2}" rpy="0 0 0"/>
+        <geometry><box size="0.025 0.025 ${cam_drop}"/></geometry>
+        <material name="grey"/>
+      </visual>
+    </xacro:macro>
+    <xacro:uvc_cam_bracket side="1"/>
+    <xacro:uvc_cam_bracket side="-1"/>
 
     <inertial>
       <origin xyz="${rod_x} 0 ${arm_z}" rpy="0 0 0"/>
@@ -156,5 +229,43 @@
     <child  link="uvc_lamps_link"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
+
+  <!-- ── RealSense D455 (real mesh), on the FRONT EDGE of each panel, facing
+       down at the bed. Link frame is pitched +90 so the Gazebo camera sensor's
+       +X axis looks straight down; the mesh is rolled so its lens faces down and
+       its long axis runs across the bed (Y). ── -->
+  <xacro:macro name="uvc_camera" params="name side">
+    <link name="uvc_cam_${name}_link">
+      <visual>
+        <!-- official RealSense d455.stl orientation (rpy pi/2,0,pi/2); link +X
+             points down (joint below), so the lens points down at the bed -->
+        <origin xyz="0 0 0" rpy="1.5708 0 1.5708"/>
+        <geometry>
+          <mesh filename="package://pomona_description/meshes/sensors/d455.stl"
+                scale="${cam_scale} ${cam_scale} ${cam_scale}"/>
+        </geometry>
+        <material name="dark"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.124 0.029 0.026"/></geometry>
+      </collision>
+    </link>
+    <joint name="uvc_cam_${name}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child  link="uvc_cam_${name}_link"/>
+      <!-- panel FRONT edge (+X), over the bed centre (side*panel_y_c), just below
+           the panel; pitched +90 so the sensor looks straight down at the bed -->
+      <origin xyz="${panel_front_x + cam_fwd} ${side*panel_y_c} ${arm_z - cam_drop}" rpy="0 1.5708 0"/>
+    </joint>
+    <!-- REP-103 optical frame (Z forward, X right, Y down) for published images -->
+    <link name="uvc_cam_${name}_optical_frame"/>
+    <joint name="uvc_cam_${name}_optical_joint" type="fixed">
+      <parent link="uvc_cam_${name}_link"/>
+      <child  link="uvc_cam_${name}_optical_frame"/>
+      <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+    </joint>
+  </xacro:macro>
+  <xacro:uvc_camera name="left"  side="1"/>
+  <xacro:uvc_camera name="right" side="-1"/>
 
 </robot>

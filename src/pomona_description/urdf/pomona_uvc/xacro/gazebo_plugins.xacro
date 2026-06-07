@@ -83,7 +83,7 @@
         </scan>
         <range>
           <min>0.2</min>
-          <max>30.0</max>
+          <max>5.0</max>
           <resolution>0.01</resolution>
         </range>
       </ray>
@@ -113,5 +113,63 @@
       </plugin>
     </sensor>
   </gazebo>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       UV-C lamp tubes — colour the whole lamp link blue in Gazebo
+       (URDF <material name="blue"> is ignored by Gazebo; needs a Gazebo/ script)
+       ════════════════════════════════════════════════════════════════════ -->
+  <gazebo reference="uvc_lamps_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       RealSense D455 x2 — one per panel, looking down at each bed
+       -> /uvc_cam_left/{color,depth}/*  and  /uvc_cam_right/{color,depth}/*
+       ════════════════════════════════════════════════════════════════════ -->
+  <xacro:macro name="uvc_cam_gazebo" params="name">
+    <gazebo reference="uvc_cam_${name}_link">
+      <sensor name="uvc_cam_${name}_rgb" type="camera">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>15</update_rate>
+        <camera>
+          <horizontal_fov>1.5708</horizontal_fov>
+          <image><width>640</width><height>480</height><format>R8G8B8</format></image>
+          <clip><near>0.1</near><far>6.0</far></clip>
+        </camera>
+        <plugin name="uvc_cam_${name}_rgb_ctrl" filename="libgazebo_ros_camera.so">
+          <ros>
+            <namespace>/uvc_cam_${name}</namespace>
+            <remapping>image_raw:=color/image_raw</remapping>
+            <remapping>camera_info:=color/camera_info</remapping>
+          </ros>
+          <frame_name>uvc_cam_${name}_optical_frame</frame_name>
+        </plugin>
+      </sensor>
+      <sensor name="uvc_cam_${name}_depth" type="depth">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>10</update_rate>
+        <camera>
+          <horizontal_fov>1.518</horizontal_fov>
+          <image><width>424</width><height>240</height></image>
+          <clip><near>0.2</near><far>6.0</far></clip>
+        </camera>
+        <plugin name="uvc_cam_${name}_depth_ctrl" filename="libgazebo_ros_camera.so">
+          <ros>
+            <namespace>/uvc_cam_${name}</namespace>
+            <remapping>image_raw:=depth/image_rect_raw</remapping>
+            <remapping>camera_info:=depth/camera_info</remapping>
+            <remapping>points:=depth/points</remapping>
+          </ros>
+          <frame_name>uvc_cam_${name}_optical_frame</frame_name>
+          <point_cloud_cutoff>0.2</point_cloud_cutoff>
+          <point_cloud_cutoff_max>6.0</point_cloud_cutoff_max>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+  <xacro:uvc_cam_gazebo name="left"/>
+  <xacro:uvc_cam_gazebo name="right"/>
 
 </robot>
