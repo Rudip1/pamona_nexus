@@ -16,7 +16,8 @@
 #   rqt_robot_steering         -> /cmd_vel teleop
 # (pomona_uvc has no arm -> no ros2_control / controller spawners / go-home.)
 #
-# Run:  ros2 launch pomona_gazebo strawberry_farm.launch.py
+# Run:  ros2 launch pomona_gazebo strawberry_farm.launch.py use_rviz:=true
+
 
 import os
 
@@ -36,9 +37,9 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_pomona_gazebo = get_package_share_directory("pomona_gazebo")
-    pkg_gazebo_ros    = get_package_share_directory("gazebo_ros")
-    pkg_pomona_desc   = get_package_share_directory("pomona_description")
-    launch_dir        = os.path.join(pkg_pomona_gazebo, "launch")
+    pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
+    pkg_pomona_desc = get_package_share_directory("pomona_description")
+    launch_dir = os.path.join(pkg_pomona_gazebo, "launch")
 
     declare_use_sim_time = DeclareLaunchArgument(
         "use_sim_time", default_value="true", description="Use Gazebo clock"
@@ -46,36 +47,47 @@ def generate_launch_description():
     # Spawn at the field ORIGIN (centre of the pinwheel, on the 2 m cross-aisle).
     declare_x_pose = DeclareLaunchArgument("x_pose", default_value="0.0")
     declare_y_pose = DeclareLaunchArgument("y_pose", default_value="0.0")
-    declare_theta  = DeclareLaunchArgument("theta",  default_value="0.0")
+    declare_theta = DeclareLaunchArgument("theta", default_value="0.0")
     declare_use_teleop = DeclareLaunchArgument(
-        "use_teleop", default_value="true",
+        "use_teleop",
+        default_value="true",
         description="Start rqt_robot_steering for /cmd_vel",
     )
 
     use_sim_time = LaunchConfiguration("use_sim_time")
-    x_pose       = LaunchConfiguration("x_pose")
-    y_pose       = LaunchConfiguration("y_pose")
-    theta        = LaunchConfiguration("theta")
+    x_pose = LaunchConfiguration("x_pose")
+    y_pose = LaunchConfiguration("y_pose")
+    theta = LaunchConfiguration("theta")
 
-    world_file = os.path.join(pkg_pomona_gazebo, "worlds", "strawberry", "strawberry_farm.world")
+    world_file = os.path.join(
+        pkg_pomona_gazebo, "worlds", "strawberry", "strawberry_farm.world"
+    )
 
     models_dir = os.path.join(pkg_pomona_gazebo, "models")
 
     gazebo_resource_path = SetEnvironmentVariable(
         name="GAZEBO_RESOURCE_PATH",
         value=os.pathsep.join(
-            [os.path.dirname(pkg_pomona_desc), "/usr/share/gazebo-11",
-             "/opt/ros/humble/share"]
+            [
+                os.path.dirname(pkg_pomona_desc),
+                "/usr/share/gazebo-11",
+                "/opt/ros/humble/share",
+            ]
         ),
     )
     # crop models sit two levels under models/, so list each group dir explicitly
     gazebo_model_path = SetEnvironmentVariable(
         name="GAZEBO_MODEL_PATH",
         value=os.pathsep.join(
-            [os.path.join(models_dir, "environment"),   # bed, grass/soil ground, hedge
-             os.path.join(models_dir, "strawberry"),    # strawberry_<variant>
-             models_dir,
-             os.path.dirname(pkg_pomona_desc), "/usr/share/gazebo-11/models"]
+            [
+                os.path.join(
+                    models_dir, "environment"
+                ),  # bed, grass/soil ground, hedge
+                os.path.join(models_dir, "strawberry"),  # strawberry_<variant>
+                models_dir,
+                os.path.dirname(pkg_pomona_desc),
+                "/usr/share/gazebo-11/models",
+            ]
         ),
     )
     gazebo_plugin_path = SetEnvironmentVariable(
@@ -116,12 +128,15 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource(
                     os.path.join(launch_dir, "spawn_xacro.launch.py")
                 ),
-                launch_arguments={"x_pose": x_pose, "y_pose": y_pose,
-                                  "theta": theta,
-                                  # spawn above ground so the robot drops onto
-                                  # its wheels (URDF spawn doesn't resolve an
-                                  # initial ground penetration cleanly).
-                                  "z_pose": "0.30"}.items(),
+                launch_arguments={
+                    "x_pose": x_pose,
+                    "y_pose": y_pose,
+                    "theta": theta,
+                    # spawn above ground so the robot drops onto
+                    # its wheels (URDF spawn doesn't resolve an
+                    # initial ground penetration cleanly).
+                    "z_pose": "0.30",
+                }.items(),
             )
         ],
     )

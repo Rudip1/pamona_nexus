@@ -1,36 +1,36 @@
 <sdf version='1.7'>
   <model name='pomona'>
-    <link name='base_link'>
+    <link name='base_footprint'>
       <inertial>
-        <pose>0.029532 -0.000257 0.107177 0 -0 0</pose>
-        <mass>50.6881</mass>
+        <pose>0.017932 -0.000257 0.341974 0 -0 0</pose>
+        <mass>50.6891</mass>
         <inertia>
-          <ixx>6.15875</ixx>
-          <ixy>-0.00039649</ixy>
-          <ixz>-0.723994</ixz>
-          <iyy>8.72098</iyy>
-          <iyz>0.00188531</iyz>
-          <izz>5.02953</izz>
+          <ixx>6.15889</ixx>
+          <ixy>-0.000245189</ixy>
+          <ixz>-0.316632</ixz>
+          <iyy>8.58615</iyy>
+          <iyz>0.00188522</iyz>
+          <izz>4.89456</izz>
         </inertia>
       </inertial>
-      <collision name='base_link_collision'>
-        <pose>0 0 0.008 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__base_link_collision'>
+        <pose>0 0 0.24279 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.925 0.38 0.21</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_collision_1'>
-        <pose>0 0 0.035 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__base_link_collision_1'>
+        <pose>0 0 0.26979 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.154167 0.627 0.07</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__imu_link_collision_2'>
-        <pose>0.32 0 0.18 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__imu_link_collision_2'>
+        <pose>0.32 0 0.41479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.035 0.057 0.022</size>
@@ -45,8 +45,8 @@
           </friction>
         </surface>
       </collision>
-      <collision name='base_link_fixed_joint_lump__box_link_collision_3'>
-        <pose>0.02 0 0.113 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__box_link_collision_3'>
+        <pose>0.02 0 0.34779 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -54,8 +54,8 @@
           </mesh>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__display_link_collision_4'>
-        <pose>-0.40294 -0.000979 0.30299 -0 -0.28807 -3.14159</pose>
+      <collision name='base_footprint_fixed_joint_lump__display_link_collision_4'>
+        <pose>-0.40294 -0.000979 0.53778 -0 -0.28807 -3.14159</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -63,8 +63,8 @@
           </mesh>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__rslidar_collision_5'>
-        <pose>0.37655 0 0.156 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__rslidar_collision_5'>
+        <pose>0.37655 0 0.39079 0 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.09</length>
@@ -80,8 +80,8 @@
           </friction>
         </surface>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_base_link_collision_6'>
-        <pose>0.212 0 0.26 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_base_link_collision_6'>
+        <pose>0.212 0 0.49479 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -89,8 +89,8 @@
           </mesh>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_cam_left_link_collision_7'>
-        <pose>0.53 1 0.74 0 1.5708 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_cam_left_link_collision_7'>
+        <pose>0.53 1 0.97479 0 1.5708 0</pose>
         <geometry>
           <box>
             <size>0.124 0.029 0.026</size>
@@ -105,8 +105,8 @@
           </friction>
         </surface>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_cam_right_link_collision_8'>
-        <pose>0.53 -1 0.74 0 1.5708 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_cam_right_link_collision_8'>
+        <pose>0.53 -1 0.97479 0 1.5708 0</pose>
         <geometry>
           <box>
             <size>0.124 0.029 0.026</size>
@@ -121,8 +121,8 @@
           </friction>
         </surface>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_rod_collision_collision_9'>
-        <pose>0.212 0 0.54 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_rod_collision_collision_9'>
+        <pose>0.065 0 0.77479 0 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.52</length>
@@ -130,8 +130,8 @@
           </cylinder>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_cross_tube_collision_collision_10'>
-        <pose>0.212 0 0.8 1.5708 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_cross_tube_collision_collision_10'>
+        <pose>0.065 0 1.03479 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>1</length>
@@ -139,56 +139,56 @@
           </cylinder>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__left_panel_collision_collision_11'>
-        <pose>0.065 1 0.8 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__left_panel_collision_collision_11'>
+        <pose>0.065 1 1.03479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 1 0.012</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__right_panel_collision_collision_12'>
-        <pose>0.065 -1 0.8 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__right_panel_collision_collision_12'>
+        <pose>0.065 -1 1.03479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 1 0.012</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_weld_1_collision_collision_13'>
-        <pose>0.212 0.5 0.8 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_weld_1_collision_collision_13'>
+        <pose>0.065 0.5 1.03479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.09 0.07 0.062</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_weld_-1_collision_collision_14'>
-        <pose>0.212 -0.5 0.8 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_weld_-1_collision_collision_14'>
+        <pose>0.065 -0.5 1.03479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.09 0.07 0.062</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_lamp_left_collision_collision_15'>
-        <pose>0.065 1 0.781 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_lamp_left_collision_collision_15'>
+        <pose>0.065 1 1.01579 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 0.9 0.018</size>
           </box>
         </geometry>
       </collision>
-      <collision name='base_link_fixed_joint_lump__uvc_lamp_right_collision_collision_16'>
-        <pose>0.065 -1 0.781 0 -0 0</pose>
+      <collision name='base_footprint_fixed_joint_lump__uvc_lamp_right_collision_collision_16'>
+        <pose>0.065 -1 1.01579 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 0.9 0.018</size>
           </box>
         </geometry>
       </collision>
-      <visual name='base_link_visual'>
-        <pose>0 0 0 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__base_link_visual'>
+        <pose>0 0 0.23479 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -196,16 +196,16 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__imu_link_visual_1'>
-        <pose>0.32 0 0.18 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__imu_link_visual_1'>
+        <pose>0.32 0 0.41479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.035 0.057 0.022</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__box_link_visual_2'>
-        <pose>0 0 0.113 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__box_link_visual_2'>
+        <pose>0 0 0.34779 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -213,8 +213,8 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__display_link_visual_3'>
-        <pose>-0.40294 -0.000979 0.30299 -0 -0.28807 -3.14159</pose>
+      <visual name='base_footprint_fixed_joint_lump__display_link_visual_3'>
+        <pose>-0.40294 -0.000979 0.53778 -0 -0.28807 -3.14159</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -222,8 +222,8 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__rslidar_visual_4'>
-        <pose>0.37655 0 0.116 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__rslidar_visual_4'>
+        <pose>0.37655 0 0.35079 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -231,8 +231,8 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_base_link_visual_5'>
-        <pose>0.212 0 0.26 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__uvc_base_link_visual_5'>
+        <pose>0.212 0 0.49479 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -240,8 +240,24 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_cam_left_link_visual_6'>
-        <pose>0.53 1 0.74 -3.14159 -4e-06 1.5708</pose>
+      <visual name='base_footprint_fixed_joint_lump__uvc_beam_left_visual_6'>
+        <pose>0.065 1 0.70779 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.6935 0.9 0.616</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_beam_right_visual_7'>
+        <pose>0.065 -1 0.70779 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.6935 0.9 0.616</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_cam_left_link_visual_8'>
+        <pose>0.53 1 0.97479 -3.14159 -4e-06 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -249,8 +265,8 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_cam_right_link_visual_7'>
-        <pose>0.53 -1 0.74 -3.14159 -4e-06 1.5708</pose>
+      <visual name='base_footprint_fixed_joint_lump__uvc_cam_right_link_visual_9'>
+        <pose>0.53 -1 0.97479 -3.14159 -4e-06 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -258,8 +274,8 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_rod_visual_8'>
-        <pose>0.212 0 0.54 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__uvc_rod_visual_10'>
+        <pose>0.065 0 0.77479 0 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.52</length>
@@ -267,8 +283,8 @@
           </cylinder>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_cross_tube_visual_9'>
-        <pose>0.212 0 0.8 1.5708 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__uvc_cross_tube_visual_11'>
+        <pose>0.065 0 1.03479 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>1</length>
@@ -276,210 +292,210 @@
           </cylinder>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__left_panel_visual_10'>
-        <pose>0.065 1 0.8 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__left_panel_visual_12'>
+        <pose>0.065 1 1.03479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 1 0.012</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__left_flap_in_visual_11'>
-        <pose>0.065 0.5 0.71 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__left_flap_in_visual_13'>
+        <pose>0.065 0.5 0.94479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 0.006 0.18</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__left_flap_out_visual_12'>
-        <pose>0.065 1.5 0.71 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__left_flap_out_visual_14'>
+        <pose>0.065 1.5 0.94479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 0.006 0.18</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__right_panel_visual_13'>
-        <pose>0.065 -1 0.8 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__right_panel_visual_15'>
+        <pose>0.065 -1 1.03479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 1 0.012</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__right_flap_in_visual_14'>
-        <pose>0.065 -0.5 0.71 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__right_flap_in_visual_16'>
+        <pose>0.065 -0.5 0.94479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 0.006 0.18</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__right_flap_out_visual_15'>
-        <pose>0.065 -1.5 0.71 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__right_flap_out_visual_17'>
+        <pose>0.065 -1.5 0.94479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.73 0.006 0.18</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_weld_1_visual_16'>
-        <pose>0.212 0.5 0.8 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__uvc_weld_1_visual_18'>
+        <pose>0.065 0.5 1.03479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.09 0.07 0.062</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_weld_-1_visual_17'>
-        <pose>0.212 -0.5 0.8 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__uvc_weld_-1_visual_19'>
+        <pose>0.065 -0.5 1.03479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.09 0.07 0.062</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__cam_arm_1_visual_18'>
-        <pose>0.48 1 0.788 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__cam_arm_1_visual_20'>
+        <pose>0.48 1 1.02279 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.12 0.025 0.02</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__cam_drop_1_visual_19'>
-        <pose>0.53 1 0.77 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__cam_drop_1_visual_21'>
+        <pose>0.53 1 1.00479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.025 0.025 0.06</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__cam_arm_-1_visual_20'>
-        <pose>0.48 -1 0.788 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__cam_arm_-1_visual_22'>
+        <pose>0.48 -1 1.02279 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.12 0.025 0.02</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__cam_drop_-1_visual_21'>
-        <pose>0.53 -1 0.77 0 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__cam_drop_-1_visual_23'>
+        <pose>0.53 -1 1.00479 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.025 0.025 0.06</size>
           </box>
         </geometry>
       </visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_0_visual_22'>
-        <pose>-0.22 1 0.781 1.5708 -0 0</pose>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_left_0_visual_24'>
+        <pose>-0.22 1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_1_visual_23'>
-        <pose>-0.106 1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_left_1_visual_25'>
+        <pose>-0.106 1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_2_visual_24'>
-        <pose>0.008 1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_left_2_visual_26'>
+        <pose>0.008 1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_3_visual_25'>
-        <pose>0.122 1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_left_3_visual_27'>
+        <pose>0.122 1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_4_visual_26'>
-        <pose>0.236 1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_left_4_visual_28'>
+        <pose>0.236 1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_left_5_visual_27'>
-        <pose>0.35 1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_left_5_visual_29'>
+        <pose>0.35 1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_0_visual_28'>
-        <pose>-0.22 -1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_right_0_visual_30'>
+        <pose>-0.22 -1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_1_visual_29'>
-        <pose>-0.106 -1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_right_1_visual_31'>
+        <pose>-0.106 -1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_2_visual_30'>
-        <pose>0.008 -1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_right_2_visual_32'>
+        <pose>0.008 -1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_3_visual_31'>
-        <pose>0.122 -1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_right_3_visual_33'>
+        <pose>0.122 -1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_4_visual_32'>
-        <pose>0.236 -1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_right_4_visual_34'>
+        <pose>0.236 -1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
-      <visual name='base_link_fixed_joint_lump__uvc_lamp_right_5_visual_33'>
-        <pose>0.35 -1 0.781 1.5708 -0 0</pose>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__uvc_lamp_right_5_visual_35'>
+        <pose>0.35 -1 1.01579 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>0.9</length>
             <radius>0.009</radius>
           </cylinder>
         </geometry>
-      <material><ambient>0 0 0.8 1</ambient><diffuse>0.1 0.2 1 1</diffuse><emissive>0 0 0.3 1</emissive></material></visual>
+      </visual>
       <sensor name='imu' type='imu'>
         <always_on>1</always_on>
         <update_rate>200</update_rate>
@@ -490,7 +506,7 @@
           <frame_name>imu_link</frame_name>
           <initial_orientation_as_reference>0</initial_orientation_as_reference>
         </plugin>
-        <pose>0.32 0 0.18 0 -0 0</pose>
+        <pose>0.32 0 0.41479 0 -0 0</pose>
       </sensor>
       <sensor name='rslidar' type='gpu_ray'>
         <always_on>1</always_on>
@@ -506,19 +522,19 @@
             </horizontal>
           </scan>
           <range>
-            <min>0.2</min>
+            <min>0.1</min>
             <max>5</max>
             <resolution>0.01</resolution>
           </range>
         </ray>
         <plugin name='rslidar_controller' filename='libgazebo_ros_ray_sensor.so'>
           <ros>
-            <remapping>~/out:=scan</remapping>
+            <remapping>~/out:=scan_raw</remapping>
           </ros>
           <output_type>sensor_msgs/LaserScan</output_type>
           <frame_name>rslidar</frame_name>
         </plugin>
-        <pose>0.37655 0 0.116 0 -0 0</pose>
+        <pose>0.37655 0 0.35079 0 -0 0</pose>
       </sensor>
       <sensor name='uvc_cam_left_rgb' type='camera'>
         <always_on>1</always_on>
@@ -544,7 +560,7 @@
           </ros>
           <frame_name>uvc_cam_left_optical_frame</frame_name>
         </plugin>
-        <pose>0.53 1 0.74 3.14159 1.57079 3.14159</pose>
+        <pose>0.53 1 0.97479 3.14159 1.57079 3.14159</pose>
       </sensor>
       <sensor name='uvc_cam_left_depth' type='depth'>
         <always_on>1</always_on>
@@ -572,7 +588,7 @@
           <point_cloud_cutoff>0.2</point_cloud_cutoff>
           <point_cloud_cutoff_max>6.0</point_cloud_cutoff_max>
         </plugin>
-        <pose>0.53 1 0.74 3.14159 1.57079 3.14159</pose>
+        <pose>0.53 1 0.97479 3.14159 1.57079 3.14159</pose>
       </sensor>
       <sensor name='uvc_cam_right_rgb' type='camera'>
         <always_on>1</always_on>
@@ -598,7 +614,7 @@
           </ros>
           <frame_name>uvc_cam_right_optical_frame</frame_name>
         </plugin>
-        <pose>0.53 -1 0.74 3.14159 1.57079 3.14159</pose>
+        <pose>0.53 -1 0.97479 3.14159 1.57079 3.14159</pose>
       </sensor>
       <sensor name='uvc_cam_right_depth' type='depth'>
         <always_on>1</always_on>
@@ -626,12 +642,12 @@
           <point_cloud_cutoff>0.2</point_cloud_cutoff>
           <point_cloud_cutoff_max>6.0</point_cloud_cutoff_max>
         </plugin>
-        <pose>0.53 -1 0.74 3.14159 1.57079 3.14159</pose>
+        <pose>0.53 -1 0.97479 3.14159 1.57079 3.14159</pose>
       </sensor>
     </link>
     <joint name='front_left_wheel' type='revolute'>
-      <pose relative_to='base_link'>0.249 0.29153 -0.0702 0 -0 0</pose>
-      <parent>base_link</parent>
+      <pose relative_to='base_footprint'>0.249 0.29153 0.16459 0 -0 0</pose>
+      <parent>base_footprint</parent>
       <child>front_left_wheel_link</child>
       <axis>
         <xyz>0 1 0</xyz>
@@ -702,8 +718,8 @@
       </visual>
     </link>
     <joint name='front_right_wheel' type='revolute'>
-      <pose relative_to='base_link'>0.249 -0.29153 -0.0702 3.14 -0 0</pose>
-      <parent>base_link</parent>
+      <pose relative_to='base_footprint'>0.249 -0.29153 0.16459 3.14 -0 0</pose>
+      <parent>base_footprint</parent>
       <child>front_right_wheel_link</child>
       <axis>
         <xyz>0 -1 0</xyz>
@@ -774,8 +790,8 @@
       </visual>
     </link>
     <joint name='rear_left_wheel' type='revolute'>
-      <pose relative_to='base_link'>-0.249 0.29153 -0.0702 0 -0 0</pose>
-      <parent>base_link</parent>
+      <pose relative_to='base_footprint'>-0.249 0.29153 0.16459 0 -0 0</pose>
+      <parent>base_footprint</parent>
       <child>rear_left_wheel_link</child>
       <axis>
         <xyz>0 1 0</xyz>
@@ -846,8 +862,8 @@
       </visual>
     </link>
     <joint name='rear_right_wheel' type='revolute'>
-      <pose relative_to='base_link'>-0.249 -0.29153 -0.0702 3.14 -0 0</pose>
-      <parent>base_link</parent>
+      <pose relative_to='base_footprint'>-0.249 -0.29153 0.16459 3.14 -0 0</pose>
+      <parent>base_footprint</parent>
       <child>rear_right_wheel_link</child>
       <axis>
         <xyz>0 -1 0</xyz>
@@ -941,6 +957,16 @@
       <odometry_frame>odom</odometry_frame>
       <robot_base_frame>base_footprint</robot_base_frame>
       <update_rate>50.0</update_rate>
+    </plugin>
+    <plugin name='wheel_joint_state' filename='libgazebo_ros_joint_state_publisher.so'>
+      <ros>
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>30</update_rate>
+      <joint_name>front_left_wheel</joint_name>
+      <joint_name>front_right_wheel</joint_name>
+      <joint_name>rear_left_wheel</joint_name>
+      <joint_name>rear_right_wheel</joint_name>
     </plugin>
   </model>
 </sdf>

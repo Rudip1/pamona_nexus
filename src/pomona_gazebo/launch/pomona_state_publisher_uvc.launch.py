@@ -41,7 +41,18 @@ def _launch_setup(context, *args, **kwargs):
             output="screen",
             parameters=[{"robot_description": urdf,
                          "use_sim_time": use_sim_time == "true"}],
-        )
+        ),
+        # The low 360° 2D rslidar (gazebo_plugins.xacro) publishes /scan_raw,
+        # which clips the rear display as a phantom obstacle. This node nulls the
+        # beams whose endpoint falls inside the robot footprint (→ +inf, traced as
+        # free/explored by slam_toolbox) and republishes /scan. Keeps full 360°.
+        Node(
+            package="pomona_gazebo",
+            executable="laser_self_filter.py",
+            name="laser_self_filter",
+            output="screen",
+            parameters=[{"use_sim_time": use_sim_time == "true"}],
+        ),
     ]
 
 

@@ -12,6 +12,12 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+# Python nodes (run via ros2 run / launch Node executable=...)
+install(
+  PROGRAMS nodes/laser_self_filter.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
