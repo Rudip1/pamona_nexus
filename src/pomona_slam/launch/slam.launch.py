@@ -8,6 +8,12 @@
 # Run with sim:   ros2 launch pomona_slam slam.launch.py use_sim_time:=true
 # Run on robot:   ros2 launch pomona_slam slam.launch.py use_sim_time:=false
 
+#       ros2 launch pomona_gazebo strawberry_farm.launch.py            # farm + uvc + teleop
+#       ros2 launch pomona_slam slam.launch.py use_sim_time:=true use_rviz:=true
+
+# drive furrows + the cross-aisle for loop closure
+#       ros2 launch pomona_slam save_map.launch.py map_name:=strawberry_farm
+
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -22,12 +28,15 @@ def generate_launch_description():
     pkg_share = get_package_share_directory("pomona_slam")
 
     declare_use_sim_time = DeclareLaunchArgument(
-        "use_sim_time", default_value="false",
+        "use_sim_time",
+        default_value="false",
         description="True for Gazebo sim, false for real robot",
     )
     declare_params = DeclareLaunchArgument(
         "params_file",
-        default_value=os.path.join(pkg_share, "config", "slam_toolbox_online_async.yaml"),
+        default_value=os.path.join(
+            pkg_share, "config", "slam_toolbox_online_async.yaml"
+        ),
         description="SLAM Toolbox parameter file",
     )
     declare_use_rviz = DeclareLaunchArgument("use_rviz", default_value="false")

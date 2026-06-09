@@ -12,7 +12,7 @@ slam_toolbox:
     scan_topic: /scan
     mode: mapping
     resolution: 0.05
-    max_laser_range: 25.0
+    max_laser_range: 5.0
     # Higher throttle to process bag faster
     throttle_scans: 1
     transform_publish_period: 0.0

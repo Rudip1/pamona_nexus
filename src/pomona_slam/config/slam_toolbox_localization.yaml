@@ -16,7 +16,7 @@ slam_toolbox:
     mode: localization
 
     resolution: 0.05
-    max_laser_range: 25.0
+    max_laser_range: 5.0
     minimum_time_interval: 0.5
 
     # Localization specifics
