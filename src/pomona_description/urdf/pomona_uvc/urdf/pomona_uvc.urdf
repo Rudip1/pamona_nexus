@@ -49,13 +49,9 @@
   <material name="brown">
     <color rgba="0.871 0.812 0.765 1.0"/>
   </material>
-  <!-- UV-C lamp "on" violet + translucent projected beam (RViz; Gazebo overrides
-       these with Gazebo/PurpleGlow + Gazebo/DarkMagentaTransparent). -->
+  <!-- UV-C lamp "on" violet (RViz; Gazebo overrides with Gazebo/PurpleGlow). -->
   <material name="uvc_violet">
     <color rgba="0.60 0.10 0.95 1.0"/>
-  </material>
-  <material name="uvc_beam">
-    <color rgba="0.60 0.15 0.95 0.22"/>
   </material>
   <!-- Base link -->
   <link name="base_link">
@@ -584,35 +580,8 @@
     <child link="uvc_lamps_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
-  <!-- ── UV-C beam link: translucent projected "light curtain" under each panel
-       (Gazebo colours it Gazebo/DarkMagentaTransparent). Visual only — no
-       collision (it is light, not a solid). ── -->
-  <link name="uvc_beam_link">
-    <visual name="uvc_beam_left">
-      <origin rpy="0 0 0" xyz="0.065 1.0 0.47300000000000003"/>
-      <geometry>
-        <box size="0.6935 0.9 0.616"/>
-      </geometry>
-      <material name="uvc_beam"/>
-    </visual>
-    <visual name="uvc_beam_right">
-      <origin rpy="0 0 0" xyz="0.065 -1.0 0.47300000000000003"/>
-      <geometry>
-        <box size="0.6935 0.9 0.616"/>
-      </geometry>
-      <material name="uvc_beam"/>
-    </visual>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.065 0 0.47300000000000003"/>
-      <mass value="0.001"/>
-      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
-    </inertial>
-  </link>
-  <joint name="uvc_beam_joint" type="fixed">
-    <parent link="base_link"/>
-    <child link="uvc_beam_link"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-  </joint>
+  <!-- UV-C emission is rendered by gpu_ray sensors on uvc_lamps_link
+       (gazebo_plugins.xacro) — a downward laser fan per lamp tube. -->
   <link name="uvc_cam_left_link">
     <visual>
       <!-- official RealSense d455.stl orientation (rpy pi/2,0,pi/2); link +X

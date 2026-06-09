@@ -49,13 +49,9 @@
   <material name="brown">
     <color rgba="0.871 0.812 0.765 1.0"/>
   </material>
-  <!-- UV-C lamp "on" violet + translucent projected beam (RViz; Gazebo overrides
-       these with Gazebo/PurpleGlow + Gazebo/DarkMagentaTransparent). -->
+  <!-- UV-C lamp "on" violet (RViz; Gazebo overrides with Gazebo/PurpleGlow). -->
   <material name="uvc_violet">
     <color rgba="0.60 0.10 0.95 1.0"/>
-  </material>
-  <material name="uvc_beam">
-    <color rgba="0.60 0.15 0.95 0.22"/>
   </material>
   <!-- Base link -->
   <link name="base_link">
@@ -584,35 +580,8 @@
     <child link="uvc_lamps_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
-  <!-- ── UV-C beam link: translucent projected "light curtain" under each panel
-       (Gazebo colours it Gazebo/DarkMagentaTransparent). Visual only — no
-       collision (it is light, not a solid). ── -->
-  <link name="uvc_beam_link">
-    <visual name="uvc_beam_left">
-      <origin rpy="0 0 0" xyz="0.065 1.0 0.47300000000000003"/>
-      <geometry>
-        <box size="0.6935 0.9 0.616"/>
-      </geometry>
-      <material name="uvc_beam"/>
-    </visual>
-    <visual name="uvc_beam_right">
-      <origin rpy="0 0 0" xyz="0.065 -1.0 0.47300000000000003"/>
-      <geometry>
-        <box size="0.6935 0.9 0.616"/>
-      </geometry>
-      <material name="uvc_beam"/>
-    </visual>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.065 0 0.47300000000000003"/>
-      <mass value="0.001"/>
-      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
-    </inertial>
-  </link>
-  <joint name="uvc_beam_joint" type="fixed">
-    <parent link="base_link"/>
-    <child link="uvc_beam_link"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-  </joint>
+  <!-- UV-C emission is rendered by gpu_ray sensors on uvc_lamps_link
+       (gazebo_plugins.xacro) — a downward laser fan per lamp tube. -->
   <link name="uvc_cam_left_link">
     <visual>
       <!-- official RealSense d455.stl orientation (rpy pi/2,0,pi/2); link +X
@@ -808,7 +777,10 @@
          instead of ODE-raycasting, sidestepping the crash (and is faster). -->
     <sensor name="rslidar" type="gpu_ray">
       <always_on>true</always_on>
-      <visualize>true</visualize>
+      <!-- viz OFF so the lidar's blue ray fan doesn't clash with the UV-C ray
+           fans (Gazebo Classic hardcodes laser colour → can't recolour either).
+           The lidar still publishes /scan; view it in RViz to recolour it. -->
+      <visualize>false</visualize>
       <update_rate>10</update_rate>
       <ray>
         <scan>
@@ -862,15 +834,550 @@
   <gazebo reference="uvc_lamps_link">
     <material>Gazebo/PurpleGlow</material>
   </gazebo>
-  <!-- ════════════════════════════════════════════════════════════════════
-       UV-C projected beam — translucent violet "light curtain" volume from the
-       lamps down onto the bed. A continuous rendered volume (not discrete rays
-       like the lidar). DarkMagentaTransparent is alpha-blended so the beds show
-       through, tinted violet where the UV-C lands.
-       ════════════════════════════════════════════════════════════════════ -->
-  <gazebo reference="uvc_beam_link">
-    <material>Gazebo/DarkMagentaTransparent</material>
+  <link name="uvc_emit_left_0_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_left_0_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_left_0_link"/>
+    <origin rpy="1.5708 0 0" xyz="-0.21999999999999997 1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_left_0_link">
+    <sensor name="uvc_emit_left_0" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
   </gazebo>
+  <link name="uvc_emit_left_1_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_left_1_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_left_1_link"/>
+    <origin rpy="1.5708 0 0" xyz="-0.10599999999999998 1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_left_1_link">
+    <sensor name="uvc_emit_left_1" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_left_2_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_left_2_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_left_2_link"/>
+    <origin rpy="1.5708 0 0" xyz="0.008000000000000007 1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_left_2_link">
+    <sensor name="uvc_emit_left_2" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_left_3_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_left_3_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_left_3_link"/>
+    <origin rpy="1.5708 0 0" xyz="0.122 1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_left_3_link">
+    <sensor name="uvc_emit_left_3" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_left_4_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_left_4_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_left_4_link"/>
+    <origin rpy="1.5708 0 0" xyz="0.236 1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_left_4_link">
+    <sensor name="uvc_emit_left_4" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_left_5_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_left_5_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_left_5_link"/>
+    <origin rpy="1.5708 0 0" xyz="0.35 1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_left_5_link">
+    <sensor name="uvc_emit_left_5" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_right_0_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_right_0_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_right_0_link"/>
+    <origin rpy="1.5708 0 0" xyz="-0.21999999999999997 -1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_right_0_link">
+    <sensor name="uvc_emit_right_0" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_right_1_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_right_1_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_right_1_link"/>
+    <origin rpy="1.5708 0 0" xyz="-0.10599999999999998 -1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_right_1_link">
+    <sensor name="uvc_emit_right_1" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_right_2_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_right_2_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_right_2_link"/>
+    <origin rpy="1.5708 0 0" xyz="0.008000000000000007 -1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_right_2_link">
+    <sensor name="uvc_emit_right_2" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_right_3_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_right_3_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_right_3_link"/>
+    <origin rpy="1.5708 0 0" xyz="0.122 -1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_right_3_link">
+    <sensor name="uvc_emit_right_3" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_right_4_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_right_4_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_right_4_link"/>
+    <origin rpy="1.5708 0 0" xyz="0.236 -1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_right_4_link">
+    <sensor name="uvc_emit_right_4" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <link name="uvc_emit_right_5_link">
+    <inertial>
+      <mass value="0.0001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+  <joint name="uvc_emit_right_5_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_emit_right_5_link"/>
+    <origin rpy="1.5708 0 0" xyz="0.35 -1.0 0.781"/>
+  </joint>
+  <gazebo reference="uvc_emit_right_5_link">
+    <sensor name="uvc_emit_right_5" type="gpu_ray">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>8</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>15</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.8326</min_angle>
+            <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+            <max_angle>-1.3090</max_angle>
+            <!-- −75°  : down-and-fore -->
+          </horizontal>
+          <vertical>
+            <samples>3</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.17</min_angle>
+            <max_angle>0.17</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+          <max>2.2</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+    </sensor>
+  </gazebo>
+  <!-- NOTE: these blue ray fans are ALWAYS on. Gazebo Classic keeps a visualised
+       laser sensor alive via the gzclient visual subscription, so SetActive()
+       can't switch them off. The toggleable UV-C signal is the disinfection DOSE
+       map (pomona_uvc → /uvc/dose in RViz), driven by /uvc/* services. -->
   <gazebo reference="uvc_cam_left_link">
     <sensor name="uvc_cam_left_rgb" type="camera">
       <always_on>true</always_on>

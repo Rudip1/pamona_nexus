@@ -87,7 +87,10 @@
          instead of ODE-raycasting, sidestepping the crash (and is faster). -->
     <sensor name="rslidar" type="gpu_ray">
       <always_on>true</always_on>
-      <visualize>true</visualize>
+      <!-- viz OFF so the lidar's blue ray fan doesn't clash with the UV-C ray
+           fans (Gazebo Classic hardcodes laser colour → can't recolour either).
+           The lidar still publishes /scan; view it in RViz to recolour it. -->
+      <visualize>false</visualize>
       <update_rate>10</update_rate>
       <ray>
         <scan>
@@ -145,14 +148,84 @@
   </gazebo>
 
   <!-- ════════════════════════════════════════════════════════════════════
-       UV-C projected beam — translucent violet "light curtain" volume from the
-       lamps down onto the bed. A continuous rendered volume (not discrete rays
-       like the lidar). DarkMagentaTransparent is alpha-blended so the beds show
-       through, tinted violet where the UV-C lands.
+       UV-C emission — a real Gazebo ray fan per lamp tube (visualised like the
+       lidar laser). Each gpu_ray is posed at its tube, frame rolled +90° so the
+       horizontal scan plane is X-Z (perpendicular to the Y-axis tube). The sweep
+       is a NARROW downward arc (≈120°, centred straight down: −150°..−30°) so it
+       is ONE render camera — NOT a 360° fan, which builds a 6-camera cube-map and
+       (×12 tubes) starved gzserver so the base stopped driving. A thin vertical
+       spread gives the fan some thickness along the tube. Rays terminate on the
+       panel/flaps + bed/plants → real coverage viz. gpu_ray (not ray) per
+       [[gpu-ray-lidar-gotcha]]. NOTE: Classic renders laser rays in fixed
+       blue/turquoise — colour is not configurable (lamps glow PurpleGlow above).
+       Tune samples / update_rate / uvc_ray_count if FPS drops.
        ════════════════════════════════════════════════════════════════════ -->
-  <gazebo reference="uvc_beam_link">
-    <material>Gazebo/DarkMagentaTransparent</material>
-  </gazebo>
+  <xacro:property name="uvc_ray_count" value="${n_tubes}"/>   <!-- gpu_ray sensors per side -->
+  <!-- fire from the lamp tube centreline so the ray origin sits ON the lamp
+       cylinder (the earlier "drop below the flap line" was a workaround for the
+       lumping bug below — no longer needed; downward rays clear the shroud) -->
+  <xacro:property name="emit_z" value="${lamp_z}"/>
+  <!-- CRITICAL: each emitter gets its OWN link, sensor at the link ORIGIN (pose 0).
+       Multiple sensors with <pose> offsets on ONE fixed-jointed link get their pose
+       DROPPED by gazebo's URDF→SDF fixed-joint lumping (verified: all 12 collapsed
+       to base origin, no roll, scanning the wheels at ~0.13 m). Putting the
+       position+roll on the JOINT (like rslidar_link) makes lumping bake it in. -->
+  <xacro:macro name="uvc_ray_emitter" params="name side i n">
+    <xacro:if value="${i &lt; n}">
+      <link name="uvc_emit_${name}_${i}_link">
+        <inertial>
+          <mass value="0.0001"/>
+          <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+        </inertial>
+      </link>
+      <joint name="uvc_emit_${name}_${i}_joint" type="fixed">
+        <parent link="base_link"/>
+        <child  link="uvc_emit_${name}_${i}_link"/>
+        <origin xyz="${panel_x_c - panel_len/2 + tube_inset_x + i*(panel_len - 2*tube_inset_x)/(n-1)} ${side*panel_y_c} ${emit_z}"
+                rpy="1.5708 0 0"/>
+      </joint>
+      <gazebo reference="uvc_emit_${name}_${i}_link">
+        <sensor name="uvc_emit_${name}_${i}" type="gpu_ray">
+          <pose>0 0 0 0 0 0</pose>
+          <always_on>true</always_on>
+          <visualize>true</visualize>
+          <update_rate>8</update_rate>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>15</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.8326</min_angle>   <!-- −105° : down-and-back (±15° from straight down, 30° total) -->
+                <max_angle>-1.3090</max_angle>   <!-- −75°  : down-and-fore -->
+              </horizontal>
+              <vertical>
+                <samples>3</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.17</min_angle>
+                <max_angle>0.17</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.01</min>
+              <!-- reach the ground: lamp is ~1.02 m AGL straight down; the ±60°
+                   edge rays need ~2 m, so the whole fan lands on the floor (in
+                   crop worlds it terminates earlier on the beds/plants) -->
+              <max>2.2</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+        </sensor>
+      </gazebo>
+      <xacro:uvc_ray_emitter name="${name}" side="${side}" i="${i+1}" n="${n}"/>
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:uvc_ray_emitter name="left"  side="1"  i="0" n="${uvc_ray_count}"/>
+  <xacro:uvc_ray_emitter name="right" side="-1" i="0" n="${uvc_ray_count}"/>
+  <!-- NOTE: these blue ray fans are ALWAYS on. Gazebo Classic keeps a visualised
+       laser sensor alive via the gzclient visual subscription, so SetActive()
+       can't switch them off. The toggleable UV-C signal is the disinfection DOSE
+       map (pomona_uvc → /uvc/dose in RViz), driven by /uvc/* services. -->
 
   <!-- ════════════════════════════════════════════════════════════════════
        RealSense D455 x2 — one per panel, looking down at each bed
