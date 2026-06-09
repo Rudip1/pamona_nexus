@@ -21,6 +21,11 @@ __pycache__/
 *.db3
 *.mcap
 
+# ── screen recordings (too heavy for git; commit a trimmed .gif instead) ──────
+*.webm
+*.mp4
+*.mov
+
 # ── goldmines: reference-only, NOT version controlled ────────────────────────
 # Read-only ROS1 source + robot dumps + downloaded sim assets (~4 GB).
 # Keep locally for reference; never commit the whole folder.
