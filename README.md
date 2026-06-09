@@ -22,7 +22,8 @@ pomona_nexus/
 │   ├── pomona_msgs/             custom messages
 │   ├── pomona_moveit_config/    MoveIt2 for xArm6 + AG95
 │   ├── pomona_slam/             SLAM Toolbox
-│   └── pomona_navigation/       Nav2
+│   ├── pomona_navigation/       Nav2 + autonomous bed-disinfection mission
+│   └── pomona_uvc/              UV-C lamp on/off services + disinfection dose map (RViz)
 ├── goldmines/                ← reference material (see goldmines/README.md)
 │   ├── scout_backup_20260522/      udev rules, configs, ip/can dumps from the robot
 │   └── scout_workspaces_20260522.tar.gz   the full original ROS1 workspace (gitignored)
@@ -40,15 +41,34 @@ source install/setup.bash
 
 ## Run
 
-Simulation:
+Simulation — two robot models:
 ```bash
+# pomona_original — Scout + mounting box + xArm6 + AG95. Base drives from the
+# rqt_robot_steering slider; arm/gripper run on gazebo_ros2_control (arm rises
+# to a home fold and holds).
+ros2 launch pomona_gazebo empty_world_pomona_original_xacro.launch.py
+
+# pomona_uvc — Scout + UV-C disinfection boom (no arm). Two downward panels with
+# 12 lamp tubes that glow violet and shoot blue UV-C ray fans onto the ground;
+# 2 RealSense D455 cameras look down at the beds.
 ros2 launch pomona_gazebo empty_world_pomona_uvc_xacro.launch.py
-# Scout + mounting box + xArm6 + AG95 spawn; the base drives from the
-# rqt_robot_steering slider, and the arm/gripper are controlled via
-# gazebo_ros2_control (arm rises to a home fold and holds).
 ```
 See [`docs/sim_runbook.md`](docs/sim_runbook.md) for the launch timeline,
 per-subsystem verification, and fixes for known failures.
+
+UV-C disinfection control (with the `pomona_uvc` boom) — switch lamps on/off by
+service (all / per-side / per-lamp) and watch the dose "blobs" build in RViz:
+```bash
+ros2 launch pomona_uvc uvc_control.launch.py rviz:=true
+ros2 service call /uvc/all std_srvs/srv/SetBool "{data: true}"
+```
+
+Autonomous bed-disinfection mission (drives every bed lane on SLAM):
+```bash
+ros2 launch pomona_gazebo strawberry_farm.launch.py
+ros2 launch pomona_navigation autonomous_waypoint.launch.py controller:=mppi
+```
+See [`pomona_navigation/README.md`](src/pomona_navigation/README.md) for the mission.
 
 Real robot:
 ```bash

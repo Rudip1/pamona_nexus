@@ -75,11 +75,14 @@ ros2 launch pomona_navigation bringup.launch.py localization:=amcl controller:=m
 ### 3 · 🌿 Autonomous disinfection mission (explore + map)
 
 ```bash
-# T1  the farm — the UV-C lamps glow violet and project a translucent beam
+# T1  the farm — the UV-C lamps glow violet and shoot blue ray fans onto the beds
 ros2 launch pomona_gazebo strawberry_farm.launch.py
 # T2  full autonomy on SLAM — sweeps every bed, BUILDS the map as it goes, returns home
 ros2 launch pomona_navigation autonomous_waypoint.launch.py controller:=mppi
-# T3  (optional) save the map the mission just built
+# T3  UV-C control + disinfection dose "blobs" in RViz (see pomona_uvc below)
+ros2 launch pomona_uvc uvc_control.launch.py rviz:=true
+ros2 service call /uvc/all std_srvs/srv/SetBool "{data: true}"
+# T4  (optional) save the map the mission just built
 ros2 launch pomona_slam save_map.launch.py map_name:=strawberry_farm
 ```
 
@@ -120,6 +123,32 @@ python3 src/pomona_navigation/pomona_navigation/launch_utils/bed_waypoints.py
 | `start_delay` | `10.0` | Seconds to let SLAM + Nav2 settle before sending waypoints |
 | `set_initial_pose` | `false` | SLAM starts at origin, so no seeding needed |
 | `rviz` | `true` | Show RViz |
+
+---
+
+## UV-C lamp control & disinfection dose — `pomona_uvc`
+
+The boom's UV-C emission is rendered in Gazebo as blue **ray fans** out of each of
+the 12 lamp tubes (`gpu_ray` sensors, always-on — Gazebo Classic can't switch a
+*visualised* laser off). The toggleable part — what a vision/treatment pipeline
+actually drives — lives in the **[`pomona_uvc`](../pomona_uvc/README.md)** package:
+
+```bash
+ros2 launch pomona_uvc uvc_control.launch.py rviz:=true
+```
+
+| Service (`std_srvs/SetBool`) | Effect |
+|---|---|
+| `/uvc/all` | all 12 lamps on/off |
+| `/uvc/left`, `/uvc/right` | one panel (6 lamps) on/off |
+| `/uvc/lamp/<name>` | one lamp, e.g. `/uvc/lamp/left_3` |
+
+While lamps are **on**, the node accumulates a UV-C **dose map** under their ground
+footprint (TF `odom`←`base_footprint`, distance-falloff model) and publishes it as a
+`nav_msgs/OccupancyGrid` on **`/uvc/dose`** — the disinfection "blobs" you see growing
+in RViz as the robot drives. Lamps default **off**; nothing is dosed until a service
+turns them on. Run it alongside `autonomous_waypoint.launch.py` (call `/uvc/all` once)
+to watch coverage build during the bed sweep.
 
 ---
 
@@ -217,7 +246,8 @@ pomona_navigation/
 <sub>
 
 Part of **[Pomona Nexus](../../README.md)** · localizes on maps from
-**[pomona_slam](../pomona_slam/README.md)** · Author **Pravin Oli** · **Apache-2.0**
+**[pomona_slam](../pomona_slam/README.md)** · UV-C control via
+**[pomona_uvc](../pomona_uvc/README.md)** · Author **Pravin Oli** · **Apache-2.0**
 
 </sub>
 </div>
