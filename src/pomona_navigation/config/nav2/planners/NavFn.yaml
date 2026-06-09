@@ -1,0 +1,21 @@
+# =============================================================================
+# pomona_navigation / config / nav2 / planners / NavFn.yaml
+# =============================================================================
+# NavFn global planner (Dijkstra / A*) — the only planner Pomona uses.
+#
+# Fast grid-based planner on the 2D occupancy grid. No kinematic constraints,
+# which is ideal for the differential-drive Scout V2. Registers under the
+# canonical "GridBased" instance name so the BT XML never changes.
+#
+# MERGE CONTRACT: fragment — overrides planner_server in nav2_base.yaml.
+# =============================================================================
+
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      tolerance: 0.5
+      use_astar: true
+      allow_unknown: true

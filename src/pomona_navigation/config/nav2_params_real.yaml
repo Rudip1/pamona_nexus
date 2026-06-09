@@ -1,7 +1,0 @@
-# Copyright 2026 Pravin Oli  <pravin.oli.08@gmail.com, olipravin18@gmail.com>
-# Licensed under the Apache License, Version 2.0.
-#
-# Nav2 overrides for real-robot. Loaded on top of nav2_params.yaml.
-# Add divergences from sim here (sensor topic remaps, looser timeouts, etc.).
-
-# (overrides go here)

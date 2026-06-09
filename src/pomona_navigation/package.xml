@@ -5,9 +5,11 @@
   <name>pomona_navigation</name>
   <version>0.1.0</version>
   <description>
-    Nav2 configuration for Pomona. Parameters, behavior trees, launchers
-    for the planner / controller / behavior / smoother server stack.
-    Works against sim or real — toggle with use_sim_time arg.
+    Nav2 bringup for Pomona. A launch-time YAML composer merges a Nav2 base
+    skeleton with a chosen controller (MPPI | DWB), the NavFn planner, and
+    optional AMCL localization plus a robot profile. Includes the autonomous
+    UV-C bed-disinfection waypoint mission for the strawberry farm.
+    Works against sim or real — toggle with use_sim_time.
   </description>
 
   <maintainer email="pravin.oli.08@gmail.com">Pravin Oli</maintainer>
@@ -16,20 +18,37 @@
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <depend>pomona_description</depend>
 
-  <exec_depend>nav2_bringup</exec_depend>
+  <!-- Nav2 stack -->
   <exec_depend>nav2_lifecycle_manager</exec_depend>
   <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>nav2_amcl</exec_depend>
   <exec_depend>nav2_bt_navigator</exec_depend>
   <exec_depend>nav2_planner</exec_depend>
+  <exec_depend>nav2_navfn_planner</exec_depend>
   <exec_depend>nav2_controller</exec_depend>
   <exec_depend>nav2_behaviors</exec_depend>
   <exec_depend>nav2_smoother</exec_depend>
   <exec_depend>nav2_waypoint_follower</exec_depend>
+  <exec_depend>nav2_velocity_smoother</exec_depend>
+  <exec_depend>nav2_collision_monitor</exec_depend>
+
+  <!-- Controller plugins (mppi + dwb) -->
+  <exec_depend>nav2_mppi_controller</exec_depend>
+  <exec_depend>nav2_dwb_controller</exec_depend>
+
+  <!-- SLAM source-of-truth + map provider -->
   <exec_depend>pomona_slam</exec_depend>
+
+  <!-- Mission node + composer -->
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>nav2_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+
   <exec_depend>rviz2</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
