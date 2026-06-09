@@ -68,7 +68,7 @@
   <xacro:property name="panel_len"   value="0.73"/>    <!-- panel fore-aft length (= box length) -->
   <xacro:property name="panel_x_c"   value="0.065"/>   <!-- panel fore-aft centre (= box centre) -->
   <xacro:property name="panel_thick" value="0.012"/>   <!-- panel thickness (Z) — thin flat plate -->
-  <xacro:property name="rod_x"       value="0.212"/>   <!-- mast over the arm base -->
+  <xacro:property name="rod_x"       value="0.065"/>   <!-- mast at box/panel fore-aft centre (= panel_x_c); cross-tube now welds each panel at the MIDPOINT of its inner edge. (Was 0.212 over the arm base, which welded 0.147 m forward of centre; the arm-base mesh at 0.212 is now the lidar pedestal.) -->
   <xacro:property name="rod_z_bot"   value="0.28"/>
   <xacro:property name="rod_radius"  value="0.025"/>   <!-- circular mast + cross-tube radius -->
 
@@ -93,6 +93,14 @@
   <xacro:property name="skirt_depth"  value="0.18"/>   <!-- side flap hang-down (shields stray rays) -->
   <xacro:property name="flap_thick"   value="0.006"/>  <!-- thin shield plate -->
   <xacro:property name="lamp_z" value="${arm_z - panel_thick/2 - tube_radius - 0.004}"/>
+
+  <!-- UV-C projected beam: a translucent "light curtain" volume from the lamp
+       plane down onto the bed top, so the disinfection looks ON in Gazebo (a
+       continuous rendered violet volume, not discrete rays). Bed top is 0.40 m
+       AGL; base_link sits 0.235 m AGL → bed top = 0.165 in base_link. -->
+  <xacro:property name="bed_top_z" value="0.165"/>
+  <xacro:property name="beam_h"  value="${lamp_z - bed_top_z}"/>
+  <xacro:property name="beam_cz" value="${(lamp_z + bed_top_z)/2.0}"/>
 
   <!-- housing for one side: flat roof plate + two thin side flaps (skirts) that
        hang down on both long edges so the UV-C only projects onto the bed -->
@@ -127,7 +135,7 @@
         <origin xyz="${panel_x_c - panel_len/2 + tube_inset_x + i*(panel_len - 2*tube_inset_x)/(n-1)} ${side*panel_y_c} ${lamp_z}"
                 rpy="1.5708 0 0"/>
         <geometry><cylinder radius="${tube_radius}" length="${tube_len}"/></geometry>
-        <material name="blue"/>
+        <material name="uvc_violet"/>
       </visual>
       <xacro:uvc_tube_row name="${name}" side="${side}" i="${i+1}" n="${n}"/>
     </xacro:if>
@@ -227,6 +235,32 @@
   <joint name="uvc_lamps_joint" type="fixed">
     <parent link="base_link"/>
     <child  link="uvc_lamps_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ── UV-C beam link: translucent projected "light curtain" under each panel
+       (Gazebo colours it Gazebo/DarkMagentaTransparent). Visual only — no
+       collision (it is light, not a solid). ── -->
+  <link name="uvc_beam_link">
+    <visual name="uvc_beam_left">
+      <origin xyz="${panel_x_c} ${panel_y_c} ${beam_cz}" rpy="0 0 0"/>
+      <geometry><box size="${panel_len*0.95} ${tube_len} ${beam_h}"/></geometry>
+      <material name="uvc_beam"/>
+    </visual>
+    <visual name="uvc_beam_right">
+      <origin xyz="${panel_x_c} ${-panel_y_c} ${beam_cz}" rpy="0 0 0"/>
+      <geometry><box size="${panel_len*0.95} ${tube_len} ${beam_h}"/></geometry>
+      <material name="uvc_beam"/>
+    </visual>
+    <inertial>
+      <origin xyz="${panel_x_c} 0 ${beam_cz}" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+  <joint name="uvc_beam_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="uvc_beam_link"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 

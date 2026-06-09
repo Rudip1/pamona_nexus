@@ -70,11 +70,16 @@
       </geometry>
     </collision>
   </link>
+  <!-- base_footprint is the TF root (on the ground): the Gazebo diff_drive
+       plugin publishes odom -> base_footprint, so base_footprint must be the
+       parent of base_link. If this joint is inverted (base_link -> footprint),
+       base_footprint ends up with two parents (odom + base_link) and the TF
+       tree breaks -> slam_toolbox drops every scan ("queue is full"). -->
   <link name="base_footprint"/>
   <joint name="base_footprint_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 -0.23479"/>
-    <parent link="base_link"/>
-    <child link="base_footprint"/>
+    <origin rpy="0 0 0" xyz="0 0 0.23479"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
   </joint>
   <link name="inertial_link">
     <inertial>

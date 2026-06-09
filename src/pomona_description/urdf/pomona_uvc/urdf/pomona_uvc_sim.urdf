@@ -49,6 +49,14 @@
   <material name="brown">
     <color rgba="0.871 0.812 0.765 1.0"/>
   </material>
+  <!-- UV-C lamp "on" violet + translucent projected beam (RViz; Gazebo overrides
+       these with Gazebo/PurpleGlow + Gazebo/DarkMagentaTransparent). -->
+  <material name="uvc_violet">
+    <color rgba="0.60 0.10 0.95 1.0"/>
+  </material>
+  <material name="uvc_beam">
+    <color rgba="0.60 0.15 0.95 0.22"/>
+  </material>
   <!-- Base link -->
   <link name="base_link">
     <visual>
@@ -70,11 +78,16 @@
       </geometry>
     </collision>
   </link>
+  <!-- base_footprint is the TF root (on the ground): the Gazebo diff_drive
+       plugin publishes odom -> base_footprint, so base_footprint must be the
+       parent of base_link. If this joint is inverted (base_link -> footprint),
+       base_footprint ends up with two parents (odom + base_link) and the TF
+       tree breaks -> slam_toolbox drops every scan ("queue is full"). -->
   <link name="base_footprint"/>
   <joint name="base_footprint_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 -0.23479"/>
-    <parent link="base_link"/>
-    <child link="base_footprint"/>
+    <origin rpy="0 0 0" xyz="0 0 0.23479"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
   </joint>
   <link name="inertial_link">
     <inertial>
@@ -312,14 +325,14 @@
   <!-- ── frame link: rod + cross-arm + flat panels ─────────────────────── -->
   <link name="uvc_cantilever_link">
     <visual name="uvc_rod">
-      <origin rpy="0 0 0" xyz="0.212 0 0.54"/>
+      <origin rpy="0 0 0" xyz="0.065 0 0.54"/>
       <geometry>
         <cylinder length="0.52" radius="0.025"/>
       </geometry>
       <material name="grey"/>
     </visual>
     <collision name="uvc_rod_collision">
-      <origin rpy="0 0 0" xyz="0.212 0 0.54"/>
+      <origin rpy="0 0 0" xyz="0.065 0 0.54"/>
       <geometry>
         <cylinder length="0.52" radius="0.025"/>
       </geometry>
@@ -327,14 +340,14 @@
     <!-- horizontal CIRCULAR cross-tube, T-welded to mast top, reaching to each
          panel's inner edge (cylinder axis along Y -> roll 90 deg) -->
     <visual name="uvc_cross_tube">
-      <origin rpy="1.5708 0 0" xyz="0.212 0 0.8"/>
+      <origin rpy="1.5708 0 0" xyz="0.065 0 0.8"/>
       <geometry>
         <cylinder length="1.0" radius="0.025"/>
       </geometry>
       <material name="grey"/>
     </visual>
     <collision name="uvc_cross_tube_collision">
-      <origin rpy="1.5708 0 0" xyz="0.212 0 0.8"/>
+      <origin rpy="1.5708 0 0" xyz="0.065 0 0.8"/>
       <geometry>
         <cylinder length="1.0" radius="0.025"/>
       </geometry>
@@ -398,27 +411,27 @@
       <material name="grey"/>
     </visual>
     <visual name="uvc_weld_1">
-      <origin rpy="0 0 0" xyz="0.212 0.5 0.8"/>
+      <origin rpy="0 0 0" xyz="0.065 0.5 0.8"/>
       <geometry>
         <box size="0.09 0.07 0.062"/>
       </geometry>
       <material name="grey"/>
     </visual>
     <collision name="uvc_weld_1_collision">
-      <origin rpy="0 0 0" xyz="0.212 0.5 0.8"/>
+      <origin rpy="0 0 0" xyz="0.065 0.5 0.8"/>
       <geometry>
         <box size="0.09 0.07 0.062"/>
       </geometry>
     </collision>
     <visual name="uvc_weld_-1">
-      <origin rpy="0 0 0" xyz="0.212 -0.5 0.8"/>
+      <origin rpy="0 0 0" xyz="0.065 -0.5 0.8"/>
       <geometry>
         <box size="0.09 0.07 0.062"/>
       </geometry>
       <material name="grey"/>
     </visual>
     <collision name="uvc_weld_-1_collision">
-      <origin rpy="0 0 0" xyz="0.212 -0.5 0.8"/>
+      <origin rpy="0 0 0" xyz="0.065 -0.5 0.8"/>
       <geometry>
         <box size="0.09 0.07 0.062"/>
       </geometry>
@@ -452,7 +465,7 @@
       <material name="grey"/>
     </visual>
     <inertial>
-      <origin rpy="0 0 0" xyz="0.212 0 0.8"/>
+      <origin rpy="0 0 0" xyz="0.065 0 0.8"/>
       <mass value="4.0"/>
       <inertia ixx="0.90" ixy="0" ixz="0" iyy="0.20" iyz="0" izz="1.0"/>
     </inertial>
@@ -469,42 +482,42 @@
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_left_1">
       <origin rpy="1.5708 0 0" xyz="-0.10599999999999998 1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_left_2">
       <origin rpy="1.5708 0 0" xyz="0.008000000000000007 1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_left_3">
       <origin rpy="1.5708 0 0" xyz="0.122 1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_left_4">
       <origin rpy="1.5708 0 0" xyz="0.236 1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_left_5">
       <origin rpy="1.5708 0 0" xyz="0.35 1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <collision name="uvc_lamp_left_collision">
       <origin rpy="0 0 0" xyz="0.065 1.0 0.781"/>
@@ -517,42 +530,42 @@
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_right_1">
       <origin rpy="1.5708 0 0" xyz="-0.10599999999999998 -1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_right_2">
       <origin rpy="1.5708 0 0" xyz="0.008000000000000007 -1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_right_3">
       <origin rpy="1.5708 0 0" xyz="0.122 -1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_right_4">
       <origin rpy="1.5708 0 0" xyz="0.236 -1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <visual name="uvc_lamp_right_5">
       <origin rpy="1.5708 0 0" xyz="0.35 -1.0 0.781"/>
       <geometry>
         <cylinder length="0.9" radius="0.009"/>
       </geometry>
-      <material name="blue"/>
+      <material name="uvc_violet"/>
     </visual>
     <collision name="uvc_lamp_right_collision">
       <origin rpy="0 0 0" xyz="0.065 -1.0 0.781"/>
@@ -569,6 +582,35 @@
   <joint name="uvc_lamps_joint" type="fixed">
     <parent link="base_link"/>
     <child link="uvc_lamps_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+  <!-- ── UV-C beam link: translucent projected "light curtain" under each panel
+       (Gazebo colours it Gazebo/DarkMagentaTransparent). Visual only — no
+       collision (it is light, not a solid). ── -->
+  <link name="uvc_beam_link">
+    <visual name="uvc_beam_left">
+      <origin rpy="0 0 0" xyz="0.065 1.0 0.47300000000000003"/>
+      <geometry>
+        <box size="0.6935 0.9 0.616"/>
+      </geometry>
+      <material name="uvc_beam"/>
+    </visual>
+    <visual name="uvc_beam_right">
+      <origin rpy="0 0 0" xyz="0.065 -1.0 0.47300000000000003"/>
+      <geometry>
+        <box size="0.6935 0.9 0.616"/>
+      </geometry>
+      <material name="uvc_beam"/>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.065 0 0.47300000000000003"/>
+      <mass value="0.001"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+  <joint name="uvc_beam_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="uvc_beam_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
   <link name="uvc_cam_left_link">
@@ -636,6 +678,10 @@
        The real unit sits at the FRONT of the mounting box, not floating
        above the base centre. Mounted on box_link with the original
        laser_Link transform from scout_xarm_base (xyz 0.37655 0 0.003).
+       Low (~0.351 m AGL) on purpose: the single 2D plane then clips the
+       0.40 m bed side-walls so the furrows map as corridors. (We tried a
+       raised central 3D lidar, but its downward rings scanned the robot's
+       own rear display as a phantom obstacle — reverted to this 2D mount.)
        Visual uses the ported laser_link mesh; collision is a cheap cylinder.
        ════════════════════════════════════════════════════════════════════ -->
   <link name="rslidar">
@@ -731,12 +777,29 @@
       <robot_base_frame>base_footprint</robot_base_frame>
       <update_rate>50.0</update_rate>
     </plugin>
-    <!-- NOTE: arm/gripper joint_states are published by joint_state_broadcaster
-         (ros2_control.xacro), not by libgazebo_ros_joint_state_publisher, to
-         avoid two publishers racing on /joint_states. -->
+    <!-- Wheel joint states. The diff_drive plugin spins the wheels in Gazebo
+         but does NOT publish their joint positions, and the wheels are not part
+         of ros2_control. Without this, robot_state_publisher has no angle for
+         the 4 continuous wheel joints and the wheels float at the origin in
+         RViz. pomona_original needs the same plugin (wheels only — disjoint
+         from joint_state_broadcaster, which covers arm+gripper, so no race). -->
+    <plugin filename="libgazebo_ros_joint_state_publisher.so" name="wheel_joint_state">
+      <ros>
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>30</update_rate>
+      <joint_name>front_left_wheel</joint_name>
+      <joint_name>front_right_wheel</joint_name>
+      <joint_name>rear_left_wheel</joint_name>
+      <joint_name>rear_right_wheel</joint_name>
+    </plugin>
   </gazebo>
   <!-- ════════════════════════════════════════════════════════════════════
-       Robosense LiDAR (publishes /scan via ray_sensor)
+       Robosense LiDAR — 360° 2D plane (publishes /scan_raw via ray_sensor)
+       A laser_self_filter node (pomona_state_publisher_uvc.launch.py) drops the
+       self-returns (the low plane clips the rear display) and republishes /scan,
+       so the robot body reads as free space, not a phantom obstacle. Full 360°
+       is kept — no angular trim — because the filter is geometric, not by angle.
        ════════════════════════════════════════════════════════════════════ -->
   <gazebo reference="rslidar">
     <!-- gpu_ray (not CPU "ray"): the CPU ray path (ODEMultiRayShape) segfaults
@@ -757,14 +820,18 @@
           </horizontal>
         </scan>
         <range>
-          <min>0.2</min>
+          <!-- 0.1 m: halves the old 0.2 m near-field dead disc (the front-middle
+               gap that stayed unexplored as the robot advanced) without pulling
+               in so far that the gpu_ray catches the sensor housing / box top
+               (0.05 m did). -->
+          <min>0.1</min>
           <max>5.0</max>
           <resolution>0.01</resolution>
         </range>
       </ray>
       <plugin filename="libgazebo_ros_ray_sensor.so" name="rslidar_controller">
         <ros>
-          <remapping>~/out:=scan</remapping>
+          <remapping>~/out:=scan_raw</remapping>
         </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
         <frame_name>rslidar</frame_name>
@@ -788,11 +855,21 @@
     </sensor>
   </gazebo>
   <!-- ════════════════════════════════════════════════════════════════════
-       UV-C lamp tubes — colour the whole lamp link blue in Gazebo
-       (URDF <material name="blue"> is ignored by Gazebo; needs a Gazebo/ script)
+       UV-C lamp tubes — emissive violet so the lamps read as ON.
+       (URDF <material> is ignored by Gazebo; needs a Gazebo/ script. PurpleGlow
+       is an emissive built-in → the tubes glow like energised UV-C lamps.)
        ════════════════════════════════════════════════════════════════════ -->
   <gazebo reference="uvc_lamps_link">
-    <material>Gazebo/Blue</material>
+    <material>Gazebo/PurpleGlow</material>
+  </gazebo>
+  <!-- ════════════════════════════════════════════════════════════════════
+       UV-C projected beam — translucent violet "light curtain" volume from the
+       lamps down onto the bed. A continuous rendered volume (not discrete rays
+       like the lidar). DarkMagentaTransparent is alpha-blended so the beds show
+       through, tinted violet where the UV-C lands.
+       ════════════════════════════════════════════════════════════════════ -->
+  <gazebo reference="uvc_beam_link">
+    <material>Gazebo/DarkMagentaTransparent</material>
   </gazebo>
   <gazebo reference="uvc_cam_left_link">
     <sensor name="uvc_cam_left_rgb" type="camera">

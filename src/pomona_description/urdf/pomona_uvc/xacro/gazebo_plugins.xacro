@@ -55,13 +55,30 @@
       <update_rate>50.0</update_rate>
     </plugin>
 
-    <!-- NOTE: arm/gripper joint_states are published by joint_state_broadcaster
-         (ros2_control.xacro), not by libgazebo_ros_joint_state_publisher, to
-         avoid two publishers racing on /joint_states. -->
+    <!-- Wheel joint states. The diff_drive plugin spins the wheels in Gazebo
+         but does NOT publish their joint positions, and the wheels are not part
+         of ros2_control. Without this, robot_state_publisher has no angle for
+         the 4 continuous wheel joints and the wheels float at the origin in
+         RViz. pomona_original needs the same plugin (wheels only — disjoint
+         from joint_state_broadcaster, which covers arm+gripper, so no race). -->
+    <plugin name="wheel_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>30</update_rate>
+      <joint_name>front_left_wheel</joint_name>
+      <joint_name>front_right_wheel</joint_name>
+      <joint_name>rear_left_wheel</joint_name>
+      <joint_name>rear_right_wheel</joint_name>
+    </plugin>
   </gazebo>
 
   <!-- ════════════════════════════════════════════════════════════════════
-       Robosense LiDAR (publishes /scan via ray_sensor)
+       Robosense LiDAR — 360° 2D plane (publishes /scan_raw via ray_sensor)
+       A laser_self_filter node (pomona_state_publisher_uvc.launch.py) drops the
+       self-returns (the low plane clips the rear display) and republishes /scan,
+       so the robot body reads as free space, not a phantom obstacle. Full 360°
+       is kept — no angular trim — because the filter is geometric, not by angle.
        ════════════════════════════════════════════════════════════════════ -->
   <gazebo reference="rslidar">
     <!-- gpu_ray (not CPU "ray"): the CPU ray path (ODEMultiRayShape) segfaults
@@ -82,14 +99,18 @@
           </horizontal>
         </scan>
         <range>
-          <min>0.2</min>
+          <!-- 0.1 m: halves the old 0.2 m near-field dead disc (the front-middle
+               gap that stayed unexplored as the robot advanced) without pulling
+               in so far that the gpu_ray catches the sensor housing / box top
+               (0.05 m did). -->
+          <min>0.1</min>
           <max>5.0</max>
           <resolution>0.01</resolution>
         </range>
       </ray>
       <plugin name="rslidar_controller" filename="libgazebo_ros_ray_sensor.so">
         <ros>
-          <remapping>~/out:=scan</remapping>
+          <remapping>~/out:=scan_raw</remapping>
         </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
         <frame_name>rslidar</frame_name>
@@ -115,11 +136,22 @@
   </gazebo>
 
   <!-- ════════════════════════════════════════════════════════════════════
-       UV-C lamp tubes — colour the whole lamp link blue in Gazebo
-       (URDF <material name="blue"> is ignored by Gazebo; needs a Gazebo/ script)
+       UV-C lamp tubes — emissive violet so the lamps read as ON.
+       (URDF <material> is ignored by Gazebo; needs a Gazebo/ script. PurpleGlow
+       is an emissive built-in → the tubes glow like energised UV-C lamps.)
        ════════════════════════════════════════════════════════════════════ -->
   <gazebo reference="uvc_lamps_link">
-    <material>Gazebo/Blue</material>
+    <material>Gazebo/PurpleGlow</material>
+  </gazebo>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       UV-C projected beam — translucent violet "light curtain" volume from the
+       lamps down onto the bed. A continuous rendered volume (not discrete rays
+       like the lidar). DarkMagentaTransparent is alpha-blended so the beds show
+       through, tinted violet where the UV-C lands.
+       ════════════════════════════════════════════════════════════════════ -->
+  <gazebo reference="uvc_beam_link">
+    <material>Gazebo/DarkMagentaTransparent</material>
   </gazebo>
 
   <!-- ════════════════════════════════════════════════════════════════════

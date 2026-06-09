@@ -70,11 +70,16 @@
       </geometry>
     </collision>
   </link>
+  <!-- base_footprint is the TF root (on the ground): the Gazebo diff_drive
+       plugin publishes odom -> base_footprint, so base_footprint must be the
+       parent of base_link. If this joint is inverted (base_link -> footprint),
+       base_footprint ends up with two parents (odom + base_link) and the TF
+       tree breaks -> slam_toolbox drops every scan ("queue is full"). -->
   <link name="base_footprint"/>
   <joint name="base_footprint_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 -0.23479"/>
-    <parent link="base_link"/>
-    <child link="base_footprint"/>
+    <origin rpy="0 0 0" xyz="0 0 0.23479"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
   </joint>
   <link name="inertial_link">
     <inertial>
@@ -847,9 +852,22 @@
       <robot_base_frame>base_footprint</robot_base_frame>
       <update_rate>50.0</update_rate>
     </plugin>
-    <!-- NOTE: arm/gripper joint_states are published by joint_state_broadcaster
-         (ros2_control.xacro), not by libgazebo_ros_joint_state_publisher, to
-         avoid two publishers racing on /joint_states. -->
+    <!-- arm/gripper joint_states come from joint_state_broadcaster
+         (ros2_control.xacro). The wheels are NOT in ros2_control and the
+         diff_drive plugin doesn't publish their positions, so they need their
+         own publisher or robot_state_publisher can't place them (wheels float
+         at the origin in RViz). Listing ONLY the 4 wheels keeps this disjoint
+         from the broadcaster (arm+gripper) — no two publishers on one joint. -->
+    <plugin filename="libgazebo_ros_joint_state_publisher.so" name="wheel_joint_state">
+      <ros>
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>30</update_rate>
+      <joint_name>front_left_wheel</joint_name>
+      <joint_name>front_right_wheel</joint_name>
+      <joint_name>rear_left_wheel</joint_name>
+      <joint_name>rear_right_wheel</joint_name>
+    </plugin>
   </gazebo>
   <!-- ════════════════════════════════════════════════════════════════════
        Robosense LiDAR (publishes /scan via ray_sensor)
@@ -866,10 +884,17 @@
       <ray>
         <scan>
           <horizontal>
-            <samples>720</samples>
+            <!-- 240 deg forward arc (NOT full 360): the lidar sits embedded low
+                 inside box_link (front wall 0.07 m ahead, sides 0.16 m -> both
+                 within the 0.2 m min_range, so ignored), but the REAR of the box
+                 + display panel are >0.2 m back and would otherwise be mapped as
+                 a rectangle trailing the robot. Trimming the rear ~120 deg drops
+                 those self-returns while keeping the low plane. (Proper 360 deg
+                 needs a mast-mounted/3D lidar.) -->
+            <samples>600</samples>
             <resolution>1</resolution>
-            <min_angle>-3.14159</min_angle>
-            <max_angle>3.14159</max_angle>
+            <min_angle>-2.10</min_angle>
+            <max_angle>2.10</max_angle>
           </horizontal>
         </scan>
         <range>

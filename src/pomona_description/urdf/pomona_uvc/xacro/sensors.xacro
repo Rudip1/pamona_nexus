@@ -19,6 +19,10 @@
        The real unit sits at the FRONT of the mounting box, not floating
        above the base centre. Mounted on box_link with the original
        laser_Link transform from scout_xarm_base (xyz 0.37655 0 0.003).
+       Low (~0.351 m AGL) on purpose: the single 2D plane then clips the
+       0.40 m bed side-walls so the furrows map as corridors. (We tried a
+       raised central 3D lidar, but its downward rings scanned the robot's
+       own rear display as a phantom obstacle — reverted to this 2D mount.)
        Visual uses the ported laser_link mesh; collision is a cheap cylinder.
        ════════════════════════════════════════════════════════════════════ -->
   <link name="rslidar">
