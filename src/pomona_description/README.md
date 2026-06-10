@@ -105,9 +105,3 @@ bash scripts/xacro_to_urdf.sh
 - AG95 gripper mount: xArm6 link_eef, zero offset
 - D435 camera mount: link_eef + xyz=(0,0,0.06) rpy=(0,-1.57,3.14) (real-robot calibration)
 - rslidar mount: box_link + xyz=(0.37655, 0, 0.003) (front of the box)
-
-## Attribution
-
-See `meshes/ATTRIBUTION` and top-level `NOTICE.md`. Geometry, meshes, and
-joint origins are adapted from upstream `scout_ros`, `xarm_ros`,
-`dh_robotics_ag95_model`, and the goldmines `scout_xarm_base` (mounting box).

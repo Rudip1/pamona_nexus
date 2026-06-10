@@ -41,3 +41,6 @@ plans/
 *.plan.md
 AGENTS.md
 CLAUDE.md
+
+# Personal job-application materials (CV, cover letter, drafts) — not part of the project
+apply/
