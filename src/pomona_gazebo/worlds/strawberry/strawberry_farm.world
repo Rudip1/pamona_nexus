@@ -5,10 +5,10 @@
     <include><uri>model://sun</uri></include>
     <include><uri>model://grass_ground</uri><pose>0 0 -0.01 0 0 0</pose></include>
     <include><uri>model://soil_ground</uri></include>
-    <include><uri>model://hedge</uri><name>hedge_n</name><pose>0  14 0 0 0 0</pose></include>
-    <include><uri>model://hedge</uri><name>hedge_s</name><pose>0 -14 0 0 0 0</pose></include>
-    <include><uri>model://hedge</uri><name>hedge_e</name><pose>14 0 0 0 0 1.5708</pose></include>
-    <include><uri>model://hedge</uri><name>hedge_w</name><pose>-14 0 0 0 0 1.5708</pose></include>
+    <include><uri>model://hedge</uri><name>hedge_n</name><pose>0  15 0 0 0 0</pose></include>
+    <include><uri>model://hedge</uri><name>hedge_s</name><pose>0 -15 0 0 0 0</pose></include>
+    <include><uri>model://hedge</uri><name>hedge_e</name><pose>15 0 0 0 0 1.5708</pose></include>
+    <include><uri>model://hedge</uri><name>hedge_w</name><pose>-15 0 0 0 0 1.5708</pose></include>
     <physics type="ode">
       <max_step_size>0.001</max_step_size>
       <real_time_update_rate>1000</real_time_update_rate>
